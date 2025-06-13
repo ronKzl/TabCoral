@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "TabCoral",
+  "version": "1.0.0",
+  "description": "A decluter extension for your chrome browser, save and restore tab groups the smart way! have multiple workshop modes! or organize your workspace!",
+  "background": {
+        "service_worker": "service-worker.js",
+        "type": "module"
+    },
+    "permissions": ["tabGroups","contextMenus"]
+  
+}
