@@ -9,5 +9,6 @@
   "side_panel": {
     "default_path": "coral.html"
   },
-  "permissions": ["tabGroups", "contextMenus","sidePanel"]
+  "permissions": ["tabs","tabGroups", "contextMenus","sidePanel"]
+  
 }
