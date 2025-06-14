@@ -5,7 +5,8 @@ A user-behavior driven checklist to guide development.
 ## MVP
 
 - [x] Extension dashboard is present on install and persistent through crashes.
-- [ ] User is able to right click on a tab group and save it.
+- [ ] User is able to view their current tab and group setup in a side panel
+- [ ] User is able to choose to save all/none of their current groups
 - [ ] User is able to view their saved tab groups in an organized way on the dashboard page.
 - [ ] User is able to click a button on the dashboard page to reopen a select saved group.
 - [ ] User is able to delete pages/groups from dashbaord page.
