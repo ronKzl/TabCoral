@@ -1,10 +1,13 @@
-console.log("on");
+//TODO: map with colors defined by google that translate that pop better and match
+//TODO: srviceworker send function
+//TODO: cleanup file
 
 //metadata
 const tabGroups = new Map(); // groupIndex, TabInfo - index, fav, url, text
 const groupInfo = new Map(); //gorupIndex, GroupInfo - color, title, collapsed
 const orderedEntries = [];
 let mainWindow = document.getElementById("display");
+
 
 chrome.tabs.query({ currentWindow: true }, (tabs) => {
   console.log(tabs);
@@ -60,13 +63,11 @@ function formGroupInfo() {
           resolve();
         });
       });
-      promises.push(p)
+      promises.push(p);
     }
   });
   return Promise.all(promises);
 }
-
-
 
 //creates a <li> for a tab with favicon,title and url to add to the main list of tabs
 function createTabListEntry(favIconUrl, title, url) {
@@ -76,68 +77,68 @@ function createTabListEntry(favIconUrl, title, url) {
 
   favicon.src = favIconUrl;
   favicon.style =
-    "width: 16; height: 16px; position:center; margin-right: 3px;";
+    "width: 16; height: 16px; position:center; margin-right: 5px; vertical-align:middle";
   listItem.appendChild(favicon);
   link.text = title;
+  link.style = "offset: -200px;"
   link.href = url;
   listItem.appendChild(link);
   return listItem;
 }
-
-//TODO: all DOM logic should start here after all data gathered
+//The main creation function that
+//TODO: clean this function up, try to seperate and figure out cleaner logic if possible to insert dividers
 function populateCoral() {
   let curGroup = -2;
   let sawGroup = false;
   let ulist = document.createElement("ul");
-
+  let comingFromUngroup = false;
   orderedEntries.forEach((tab) => {
     if (tab.groupId === -1) {
       ulist.append(createTabListEntry(tab.favicon, tab.title, tab.url));
+
+      comingFromUngroup = true;
+      //make line
+      let line = document.createElement("hr");
+      ulist.appendChild(line);
     } else if (tab.groupId != curGroup) {
+      if (!comingFromUngroup) {
+        //make line
+        let line = document.createElement("hr");
+        ulist.appendChild(line);
+      }
+      comingFromUngroup = false;
+      if (sawGroup) {
+        sawGroup = !sawGroup;
+      }
+      //first time
       if (!sawGroup) {
         sawGroup = true;
-        //make title by coloring and title
+        curGroup = tab.groupId;
+        //make header
         let h2 = document.createElement("h2");
         h2.textContent = groupInfo.get(tab.groupId).title;
         h2.style = `color: ${
           groupInfo.get(tab.groupId).color
-        }; underline: true;`;
+        }; text-decoration: underline;`;
+
+        const btn = document.createElement("button");
+        btn.textContent = "Save Group";
+        btn.onclick = () => {
+          console.log("Comm with the service worker....");
+        };
+        btn.style = "margin-left:15px;";
+        h2.appendChild(btn);
         ulist.appendChild(h2);
       }
+      ulist.append(createTabListEntry(tab.favicon, tab.title, tab.url));
+    } else {
+      ulist.append(createTabListEntry(tab.favicon, tab.title, tab.url));
     }
   });
+
   mainWindow.appendChild(ulist);
 }
 
-/* 
-//TODO: SEPERATE INTO ITS OWN FUNCTION - ONLY GATHER THE TABS AND GROUPS HERE
-    //DOM manips to create a list of groups
-    let ulist = document.createElement("ul"); //CLEAN
-    let curGroupId = -2
-    let curGroupList = document.createElement("ul")
-    // 1 to n cuz first tab will be the newly opened dashboard html 
-    for (let i = 1; i < tabs.length; i++){
-        if (tabs[i].groupId === -1){
-            ulist.append(createTabListEntry(tabs[i].favIconUrl,tabs[i].title,tabs[i].url)) //CLEAN
-        }
-        else if (tabs[i].groupId !== curGroupId){
-            let g = document.createElement("p").text = "New group"
-            curGroupId = tabs[i].groupId
-            ulist.append(g)
-            ulist.append(createTabListEntry(tabs[i].favIconUrl,tabs[i].title,tabs[i].url))
-        }
-        else {
-            ulist.append(createTabListEntry(tabs[i].favIconUrl,tabs[i].title,tabs[i].url))
-        }
-        //ulist.append(createTabListEntry(tabs[i].favIconUrl,tabs[i].title,tabs[i].url)) //CLEAN
-        //start an unordered list object
-        //
-        //want to know if it belongs to a group isGrouped, groupNumber
-        //groupcolor, group name
-        //want title, faviconUrl, url, index possibly
-        // console.log(tabs[i].url)
-    }
-    
-    mainWindow.appendChild(ulist) //CLEAN
-
-*/
+function saveAll() {
+  console.log("saving entire workflow");
+}
