@@ -1,16 +1,39 @@
-//TODO: map with colors defined by google that translate that pop better and match
 //TODO: srviceworker send function
 //TODO: cleanup file
+//TODO: improve styling of components/add css or framework file
 
 //metadata
+const tabColorMap = {
+  grey: "#5f6368",
+  blue: "#1a73e8",
+  red: "#d93025",
+  yellow: "#f9ab00",
+  green: "#188038",
+  pink: "#d01884",
+  purple: "#a142f4",
+  cyan: "#007b83",
+  orange: "#fa903e",
+};
 const tabGroups = new Map(); // groupIndex, TabInfo - index, fav, url, text
 const groupInfo = new Map(); //gorupIndex, GroupInfo - color, title, collapsed
 const orderedEntries = [];
 let mainWindow = document.getElementById("display");
 
+//TODO: cleanup later when MVP done
+//init main save all btn
+let header = document.getElementById("header");
+header.style.display = "flex"
+const btn = document.createElement("button");
+        btn.textContent = "Save All";
+        btn.onclick = () => {
+          console.log("Comm with the service worker to save all....");
+        };
+btn.style.cursor = "pointer";
+header.append(btn)
+
+
 
 chrome.tabs.query({ currentWindow: true }, (tabs) => {
-  console.log(tabs);
   //store all the grouped and ungrouped windows
   tabs.forEach((tab) => {
     //skip first tab it will be the extension
@@ -42,7 +65,6 @@ chrome.tabs.query({ currentWindow: true }, (tabs) => {
   });
   console.log(tabGroups);
   console.log(groupInfo);
-  //   populateCoral();
 });
 
 //create the groupMap with groupInfo
@@ -74,14 +96,22 @@ function createTabListEntry(favIconUrl, title, url) {
   let listItem = document.createElement("li");
   let favicon = document.createElement("img");
   let link = document.createElement("a");
-
+  //Favicon
   favicon.src = favIconUrl;
-  favicon.style =
-    "width: 16; height: 16px; position:center; margin-right: 5px; vertical-align:middle";
+  favicon.style.width = "16px";
+  favicon.style.height = "16px";
+  favicon.style.position = "center";
+  favicon.style.marginRight = "5px";
+  favicon.style.verticalAlign = "middle";
   listItem.appendChild(favicon);
+  //text
   link.text = title;
-  link.style = "offset: -200px;"
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.style.textDecoration = "none";
+  link.style.color = "black";
   link.href = url;
+
   listItem.appendChild(link);
   return listItem;
 }
@@ -95,7 +125,13 @@ function populateCoral() {
   orderedEntries.forEach((tab) => {
     if (tab.groupId === -1) {
       ulist.append(createTabListEntry(tab.favicon, tab.title, tab.url));
-
+      const btn = document.createElement("button");
+        btn.textContent = "Save Tab";
+        btn.style.cursor = "pointer";
+        btn.onclick = () => {
+          console.log("Comm with the service worker....");
+        };
+      ulist.append(btn)
       comingFromUngroup = true;
       //make line
       let line = document.createElement("hr");
@@ -117,16 +153,16 @@ function populateCoral() {
         //make header
         let h2 = document.createElement("h2");
         h2.textContent = groupInfo.get(tab.groupId).title;
-        h2.style = `color: ${
-          groupInfo.get(tab.groupId).color
-        }; text-decoration: underline;`;
+        h2.style.color = tabColorMap[groupInfo.get(tab.groupId).color];
+        h2.style.textDecoration = "underline";
 
         const btn = document.createElement("button");
         btn.textContent = "Save Group";
+        btn.style.cursor = "pointer";
         btn.onclick = () => {
           console.log("Comm with the service worker....");
         };
-        btn.style = "margin-left:15px;";
+        btn.style.marginLeft = "15px";
         h2.appendChild(btn);
         ulist.appendChild(h2);
       }
