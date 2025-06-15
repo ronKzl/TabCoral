@@ -24,7 +24,7 @@ chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
 //Opens the extension dashboard html page and records its tab id for later use
 function openDashboard() {
   chrome.tabs.create(
-    { url: "dashboard.html", pinned: true, index: 0 },
+    { url: "dashboard-ui/dashboard/dist/index.html", pinned: true, index: 0 },
     (tab) => {
       extensionTab = tab.id; //reassign id to new one
     }

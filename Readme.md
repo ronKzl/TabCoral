@@ -8,8 +8,9 @@ A minimal Chrome Extension to create and persist a dashboard tab that stays pinn
 ## 🛠 Tech Stack
 
 - Chrome Extensions API (Manifest V3)
-- JavaScript
-- TBD
+- JavaScript (Extension Sidebar & Extension service worker)
+- TypeScript (User Control Dashboard)
+- React + Vite, Redux, React Material UI (User Control Dashboard)
 
 
 
