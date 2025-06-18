@@ -33,15 +33,25 @@ function openDashboard() {
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
-    id: 'openSidePanel',
-    title: 'Open side panel',
-    contexts: ['all']
+    id: "openSidePanel",
+    title: "Open side panel",
+    contexts: ["all"],
   });
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === 'openSidePanel') {
+  if (info.menuItemId === "openSidePanel") {
     // This will open the panel in all the pages on the current window.
     chrome.sidePanel.open({ windowId: tab.windowId });
+  }
+});
+
+chrome.runtime.onMessage.addListener((msg, sender) => {
+  if (msg.type === "SAVE_ALL") {
+    chrome.storage.local.get("workflows").then((store) => {
+      const all = store.workflows || [];
+      all.push({ id: Date.now(), data: msg.data });
+      return chrome.storage.local.set({ workflows: all });
+    });
   }
 });

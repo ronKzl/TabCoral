@@ -22,16 +22,23 @@ let mainWindow = document.getElementById("display");
 //TODO: cleanup later when MVP done
 //init main save all btn
 let header = document.getElementById("header");
-header.style.display = "flex"
+header.style.display = "flex";
 const btn = document.createElement("button");
-        btn.textContent = "Save All";
-        btn.onclick = () => {
-          console.log("Comm with the service worker to save all....");
-        };
+btn.textContent = "Save All";
+btn.onclick = () => {
+  console.log("Comm with the service worker to save all....");
+  const safeData = {
+    tabGroups: Object.fromEntries(tabGroups),
+    groupInfo: Object.fromEntries(groupInfo),
+    orderedEntries: orderedEntries,
+  };
+  chrome.runtime.sendMessage({
+    type: "SAVE_ALL",
+    data: safeData,
+  });
+};
 btn.style.cursor = "pointer";
-header.append(btn)
-
-
+header.append(btn);
 
 chrome.tabs.query({ currentWindow: true }, (tabs) => {
   //store all the grouped and ungrouped windows
@@ -126,12 +133,12 @@ function populateCoral() {
     if (tab.groupId === -1) {
       ulist.append(createTabListEntry(tab.favicon, tab.title, tab.url));
       const btn = document.createElement("button");
-        btn.textContent = "Save Tab";
-        btn.style.cursor = "pointer";
-        btn.onclick = () => {
-          console.log("Comm with the service worker....");
-        };
-      ulist.append(btn)
+      btn.textContent = "Save Tab";
+      btn.style.cursor = "pointer";
+      btn.onclick = () => {
+        console.log("Comm with the service worker....");
+      };
+      ulist.append(btn);
       comingFromUngroup = true;
       //make line
       let line = document.createElement("hr");

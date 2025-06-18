@@ -9,7 +9,7 @@
   "side_panel": {
     "default_path": "coral.html"
   },
-  "permissions": ["tabs", "tabGroups", "contextMenus", "sidePanel"],
+  "permissions": ["tabs", "tabGroups", "contextMenus", "sidePanel","storage"],
   "web_accessible_resources": [
     {
       "resources": ["/dashboard-ui/dashboard/dist/*"],
