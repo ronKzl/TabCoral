@@ -34,7 +34,7 @@ btn.onclick = () => {
   };
   chrome.runtime.sendMessage({
     type: "SAVE_ALL",
-    data: safeData,
+    data: { id: "current", savedAt: new Date().toISOString(), userData: safeData },
   });
 };
 btn.style.cursor = "pointer";

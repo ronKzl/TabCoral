@@ -50,7 +50,16 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === "SAVE_ALL") {
     chrome.storage.local.get("workflows").then((store) => {
       const all = store.workflows || [];
-      all.push({ id: Date.now(), data: msg.data });
+      const existingIndex = all.findIndex((w) => w.id === msg.data.id);
+
+      if (existingIndex !== -1) {
+        // Overwrite the existing one
+        all[existingIndex] = msg.data;
+      } else {
+        // Otherwise, push it as new
+        all.push(msg.data);
+      }
+      //all.push({ id: Date.now(), data: msg.data });
       return chrome.storage.local.set({ workflows: all });
     });
   }
