@@ -9,11 +9,11 @@ import WorkflowWindow from './components/WorkflowWindow';
 function App() {
 
   const dispatch = useDispatch();
-
   useEffect(() => {
     //mount array [each entry is 1 workflow that can be reconstructed]
     //workflow collectyion of (ordered tabs, group metadata, tab metadata)
     chrome.storage.local.get('workflows').then((store) => {
+      console.log("first time")
       dispatch(setWorkflows(store.workflows || []));
     });
 

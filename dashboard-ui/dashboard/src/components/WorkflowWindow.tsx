@@ -3,7 +3,10 @@ import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import {useAppSelector} from '../hooks'
+//import {useAppSelector} from '../hooks'
+//type session,
+import {  type workflows } from '../interfaces/session';
+import { useSelector } from 'react-redux';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#fff',
@@ -18,7 +21,29 @@ const Item = styled(Paper)(({ theme }) => ({
 
 function WorkflowWindow() {   
     
-    const tabs = useAppSelector((state) => state.workflows)
+    //data retrieveal is happening from the redux store! ()
+    const Alldata = useSelector((state: workflows) => state.workflows)
+    //when array is not here cant read props of undefined
+    const cur_session = useSelector((state: workflows) => {
+        if (state.workflows.length === 0){
+            return "None - start saving now!"
+        }
+        else{
+            return state.workflows[0].id
+        }
+    })
+
+    const tabs = useSelector((state:workflows) => {
+        if (state.workflows.length === 0){
+            return null
+        }
+        else{
+            return state.workflows[0].userData.orderedEntries
+        }
+    })
+
+    console.log(Alldata)
+    console.log(cur_session)
     console.log(tabs)
     return (
     <Box sx={{ flexGrow: 1 }}>
