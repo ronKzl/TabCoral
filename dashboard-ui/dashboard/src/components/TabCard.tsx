@@ -5,31 +5,22 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import {  type sessions } from '../interfaces/session';
-import { useSelector } from 'react-redux';
 import CardMedia from '@mui/material/CardMedia';
-
-type TabCardprops = {
-  id: number
-}
+import {type tab} from "../interfaces/session"
 
 
-function TabCard({ id }: TabCardprops){
-    console.log(id)
-    const tab = useSelector((state:sessions) => {
-      return state.sessions[0].userData.orderedEntries.find((t) => t.index == id)
-    })
-    console.log(tab)
-    
+
+function TabCard( {favicon, url, title} : tab){
+      
 const card = (
   <React.Fragment>
     <CardContent sx = {{maxHeight: 150}}>
       <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
         <CardMedia
         component="img"
-        alt={tab?.title}
+        alt={title}
         height="16"
-        image={tab?.favicon}
+        image={favicon}
         sx={{ maxWidth: 16 ,
           backgroundColor: 'grey', // light gray background #f0f0f0
           borderRadius: '4px',
@@ -38,7 +29,7 @@ const card = (
       />
       </Typography>
       <Typography noWrap variant="h5" component="div">
-        <a href={tab?.url}>{tab?.title}</a>
+        <a href={url}>{title}</a>
       </Typography>
     </CardContent>
     <CardActions>

@@ -16,9 +16,9 @@ export interface session {
   id: string;
   savedAt: string;
   userData: {
-    groupInfo: Map<number, group>;
+    groupInfo: Record<number, group> ;
     orderedEntries: Array<tab>;
-    tabGroups: Map<number, Array<tab>>;
+    tabGroups: Record<number, Array<tab>>;
   };
 }
 
