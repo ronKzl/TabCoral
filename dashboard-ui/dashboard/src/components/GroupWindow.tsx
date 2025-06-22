@@ -1,38 +1,56 @@
-import Box from '@mui/material/Box';
-// import * as React from 'react';
-// import { styled } from '@mui/material/styles';
-// import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
+import Box from "@mui/material/Box";
+import { useSessionSelector } from "../hooks";
+import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import TabCard from "./TabCard";
+import IconButton from "@mui/material/IconButton";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-//import {useAppSelector} from '../hooks'
-// import { type sessions } from '../interfaces/session';
-import {useSessionSelector } from '../hooks';
-//import TabCard from './TabCard';
 
-function GroupWindow(){
-    const tabs = useSessionSelector((state) => {
-        if (state.sessions.length === 0){
-            return null
-        }
-        else{ 
-            return Object.keys(state.sessions[0].userData.tabGroups)
-            //console.log(typeof tabGroupEntires)
-            //console.log(tabGroupEntires)
-            
-        }
-    })
-    
-    console.log(tabs)
-    return (
+function GroupWindow() {
+  const tabs = useSessionSelector(
+    (state) => state.sessions[0]?.userData.tabGroups ?? {}
+  );
+
+  return (
     <Box sx={{ flexGrow: 1 }}>
-      <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 12, sm: 12, md: 12 }}>
-        {tabs?.map((groupIndex) => <Grid key = {groupIndex} size={{ xs: 2, sm: 4, md: 4 }}>
-            <p>{groupIndex}</p>
-          </Grid>)}
-      </Grid>
+      {Object.entries(tabs).map(([id, tabs]) => (
+        <Accordion key={id} sx={{ width: "100%" }}>
+          <AccordionSummary  sx={{ '& .MuiAccordionSummary-content': { alignItems: 'center' } }} expandIcon={<ExpandMoreIcon />}>
+            
+              <Box> Group {id} ({tabs.length})</Box>
+               <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
+                {/* action buttons */}
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation(); /* delete group */
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+                <IconButton
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation(); /* more menu */
+                  }}
+                >
+                  <MoreVertIcon />
+                </IconButton>
+            </Box>
+          </AccordionSummary>
+          <AccordionDetails>
+            {tabs?.map((tab) => (
+              <Box key={tab.index}>
+                <TabCard {...tab}></TabCard>
+              </Box>
+            ))}
+          </AccordionDetails>
+        </Accordion>
+      ))}
     </Box>
-)
-
+  );
 }
 
 export default GroupWindow;

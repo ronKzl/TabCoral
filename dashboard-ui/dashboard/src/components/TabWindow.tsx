@@ -1,9 +1,5 @@
 import Box from '@mui/material/Box';
-// import * as React from 'react';
-// import { styled } from '@mui/material/styles';
-// import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-//import {useAppSelector} from '../hooks'
 import {  type sessions } from '../interfaces/session';
 import { useSelector } from 'react-redux';
 import TabCard from './TabCard';

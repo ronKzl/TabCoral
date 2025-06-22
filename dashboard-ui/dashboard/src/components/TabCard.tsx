@@ -9,7 +9,6 @@ import CardMedia from '@mui/material/CardMedia';
 import {type tab} from "../interfaces/session"
 
 
-
 function TabCard( {favicon, url, title} : tab){
       
 const card = (
@@ -42,6 +41,7 @@ const card = (
     return (
     <Box sx={{ minWidth: 275 }}>
       <Card variant="outlined">{card}</Card>
+      <br />
     </Box>
   )
 }

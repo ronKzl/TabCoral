@@ -3,7 +3,7 @@ import './App.css'
 import { useDispatch } from 'react-redux';
 import { setSessions } from './sessionSlice';
 import Box from '@mui/material/Box';
-import WorkflowSlider from './components/WorkflowSlider';
+// import WorkflowSlider from './components/WorkflowSlider';
 import TabWindow from './components/TabWindow';
 import GroupWindow from './components/GroupWindow';
 
@@ -34,7 +34,7 @@ function App() {
     <>
       <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
           This Box renders as an HTML section element.
-          <WorkflowSlider />
+          {/* <WorkflowSlider /> */}
           <GroupWindow />
           <TabWindow />
     </Box>
