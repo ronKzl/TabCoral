@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import {  type sessions } from '../interfaces/session';
 import { useSelector } from 'react-redux';
 import CardMedia from '@mui/material/CardMedia';
+
 type TabCardprops = {
   id: number
 }
@@ -31,18 +32,17 @@ const card = (
         image={tab?.favicon}
         sx={{ maxWidth: 16 ,
           backgroundColor: 'grey', // light gray background #f0f0f0
-          borderRadius: '16px',
+          borderRadius: '4px',
           padding: '2px',
           border: '2px solid #ccc' }}
       />
       </Typography>
-      <Typography variant="h5" component="div">
+      <Typography noWrap variant="h5" component="div">
         <a href={tab?.url}>{tab?.title}</a>
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="small">Delete</Button>
-      <Button size="small">Open</Button>
+      <Button size="small" sx={{color: 'red'}}>Delete</Button>
     </CardActions>
   </React.Fragment>
 );
