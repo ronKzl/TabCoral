@@ -4,23 +4,23 @@ export interface session {
   savedAt: string;
   userData: {
     groupInfo: Map<
-      BigInt,
+      number,
       { collapsed: boolean; color: string; title: string }
     >;
     orderedEntries: Array<{
       favicon: string;
-      groupId: BigInt;
-      index: BigInt;
+      groupId: number;
+      index: number;
       title: string;
       url: string;
     }>;
     tabGroups: Map<
-      BigInt,
-      Array<{ favicon: string; index: BigInt; title: string; url: string }>
+      number,
+      Array<{ favicon: string; index: number; title: string; url: string }>
     >;
   };
 }
-//user workflow consists of multiple sessions
-export interface workflows {
-  workflows: Array<session>;
+//user sessions consists of multiple session objects
+export interface sessions {
+  sessions: Array<session>;
 }

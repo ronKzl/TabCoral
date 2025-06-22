@@ -1,9 +1,9 @@
-import { configureStore } from '@reduxjs/toolkit';
-import workflowReducer from './workflowSlice';
+import { configureStore } from "@reduxjs/toolkit";
+import sessionReducer from "./sessionSlice";
 
 export const store = configureStore({
   reducer: {
-    workflows: workflowReducer,
+    sessions: sessionReducer,
   },
 });
 

@@ -48,8 +48,8 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 
 chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === "SAVE_ALL") {
-    chrome.storage.local.get("workflows").then((store) => {
-      const all = store.workflows || [];
+    chrome.storage.local.get("sessions").then((store) => {
+      const all = store.sessions || [];
       const existingIndex = all.findIndex((w) => w.id === msg.data.id);
 
       if (existingIndex !== -1) {
@@ -60,7 +60,7 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
         all.push(msg.data);
       }
       //all.push({ id: Date.now(), data: msg.data });
-      return chrome.storage.local.set({ workflows: all });
+      return chrome.storage.local.set({ sessions: all });
     });
   }
 });

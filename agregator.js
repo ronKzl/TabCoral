@@ -34,7 +34,11 @@ btn.onclick = () => {
   };
   chrome.runtime.sendMessage({
     type: "SAVE_ALL",
-    data: { id: "current", savedAt: new Date().toISOString(), userData: safeData },
+    data: {
+      id: "current",
+      savedAt: new Date().toISOString(),
+      userData: safeData,
+    },
   });
 };
 btn.style.cursor = "pointer";
@@ -183,5 +187,5 @@ function populateCoral() {
 }
 
 function saveAll() {
-  console.log("saving entire workflow");
+  console.log("saving entire session");
 }

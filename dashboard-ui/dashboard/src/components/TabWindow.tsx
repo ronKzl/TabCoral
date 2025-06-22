@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 //import {useAppSelector} from '../hooks'
 //type session,
-import {  type workflows } from '../interfaces/session';
+import {  type sessions } from '../interfaces/session';
 import { useSelector } from 'react-redux';
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -19,26 +19,26 @@ const Item = styled(Paper)(({ theme }) => ({
   }),
 }));
 
-function WorkflowWindow() {   
+function TabWindow() {   
     
     //data retrieveal is happening from the redux store! ()
-    const Alldata = useSelector((state: workflows) => state.workflows)
+    const Alldata = useSelector((state: sessions) => state.sessions)
     //when array is not here cant read props of undefined
-    const cur_session = useSelector((state: workflows) => {
-        if (state.workflows.length === 0){
+    const cur_session = useSelector((state: sessions) => {
+        if (state.sessions.length === 0){
             return "None - start saving now!"
         }
         else{
-            return state.workflows[0].id
+            return state.sessions[0].id
         }
     })
 
-    const tabs = useSelector((state:workflows) => {
-        if (state.workflows.length === 0){
+    const tabs = useSelector((state:sessions) => {
+        if (state.sessions.length === 0){
             return null
         }
         else{
-            return state.workflows[0].userData.orderedEntries
+            return state.sessions[0].userData.orderedEntries
         }
     })
 
@@ -48,14 +48,12 @@ function WorkflowWindow() {
     return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-        {Array.from(Array(6)).map((_, index) => (
-          <Grid key={index} size={{ xs: 2, sm: 4, md: 4 }}>
-            <Item>{index + 1}</Item>
-          </Grid>
-        ))}
+        {tabs?.map((tab) => <Grid key = {tab.index} size={{ xs: 2, sm: 4, md: 4 }}>
+            <Item>{tab.title}</Item>
+          </Grid>)}
       </Grid>
     </Box>
     )
 }
 
-export default WorkflowWindow
+export default TabWindow
