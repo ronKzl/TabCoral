@@ -1,26 +1,27 @@
-//1 user sessions
+export interface tab {
+  favicon: string;
+  groupId: number;
+  index: number;
+  title: string;
+  url: string;
+}
+
+export interface group {
+  collapsed: boolean;
+  color: string;
+  title: string;
+}
+
 export interface session {
   id: string;
   savedAt: string;
   userData: {
-    groupInfo: Map<
-      number,
-      { collapsed: boolean; color: string; title: string }
-    >;
-    orderedEntries: Array<{
-      favicon: string;
-      groupId: number;
-      index: number;
-      title: string;
-      url: string;
-    }>;
-    tabGroups: Map<
-      number,
-      Array<{ favicon: string; index: number; title: string; url: string }>
-    >;
+    groupInfo: Map<number, group>;
+    orderedEntries: Array<tab>;
+    tabGroups: Map<number, Array<tab>>;
   };
 }
-//user sessions consists of multiple session objects
+
 export interface sessions {
   sessions: Array<session>;
 }
