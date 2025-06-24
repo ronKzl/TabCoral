@@ -12,8 +12,9 @@ import Typography from '@mui/material/Typography';
 
 function App() {
   const label = { inputProps: { 'aria-label': 'Color switch demo' } };
-  const [isChecked, setIsChecked] = useState(true)
+  const [isChecked, setIsChecked] = useState(false)
 
+  
   const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked)
   } 

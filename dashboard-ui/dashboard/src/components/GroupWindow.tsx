@@ -7,8 +7,10 @@ import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { type group } from "../interfaces/session";
-
-
+import { useState } from "react";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 
 function GroupWindow() {
   const tabs = useSessionSelector(
@@ -17,56 +19,73 @@ function GroupWindow() {
   const groupInfo = useSessionSelector(
     (state) => state.sessions[0]?.userData.groupInfo ?? {}
   ) as Record<string, group>;
-  console.log(groupInfo)
+  console.log(groupInfo);
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const tabColorMap: Record<string, string> = {
-  'grey': "#5f6368",
-  'blue': "#1a73e8",
-  'red': "#d93025",
-  'yellow': "#f9ab00",
-  'green': "#188038",
-  'pink': "#d01884",
-  'purple': "#a142f4",
-  'cyan': "#007b83",
-  'orange': "#fa903e",
-};
+    grey: "#5f6368",
+    blue: "#1a73e8",
+    red: "#d93025",
+    yellow: "#f9ab00",
+    green: "#188038",
+    pink: "#d01884",
+    purple: "#a142f4",
+    cyan: "#007b83",
+    orange: "#fa903e",
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      {Object.entries(tabs).map(([id, tabs]) => ( 
-        
-        <Accordion key={id} sx={{ width: "100%"}}>
-          <AccordionSummary  sx={{  '& .MuiAccordionSummary-content': { alignItems: 'center' } }} expandIcon={<ExpandMoreIcon />}>
-            
-              <Box> {groupInfo[id]?.title ?? 'Ungrouped'} ({tabs.length})</Box>
-               <Box sx={{ ml: 'auto', display: 'flex', gap: 1 }}>
-                {/* action buttons */}
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation(); /* delete group */
-                  }}
-                >
-                  <DeleteIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={(e) => {
-                    e.stopPropagation(); /* more menu */
-                  }}
-                >
-                  <MoreVertIcon />
-                </IconButton>
+      {Object.entries(tabs).map(([id, tabs]) => (
+        <Accordion key={id} sx={{ width: "100%" }}>
+          <AccordionSummary
+            sx={{ "& .MuiAccordionSummary-content": { alignItems: "center" } }}
+            expandIcon={<ExpandMoreIcon />}
+          >
+            <Box>
+              {" "}
+              {groupInfo[id]?.title ?? "Ungrouped"} ({tabs.length})
+            </Box>
+            <Box sx={{ ml: "auto", display: "flex", gap: 1 }}>
+              <IconButton size="small" onClick={(e) => {handleClick(e); e.stopPropagation();}}>
+                <MoreVertIcon />
+              </IconButton>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                slotProps={{
+                  list: {
+                    "aria-labelledby": "basic-button",
+                  },
+                }}
+              >
+                <MenuItem onClick={handleClose}> <FolderOpenIcon /> Open Group</MenuItem>
+                <MenuItem onClick={handleClose}> <DeleteIcon /> Delete Group </MenuItem>
+              </Menu>
             </Box>
           </AccordionSummary>
-          <AccordionDetails sx ={{background: `${tabColorMap[groupInfo[id]?.color] ?? 'white'}`}}>
+          <AccordionDetails
+            sx={{
+              background: `${tabColorMap[groupInfo[id]?.color] ?? "white"}`,
+            }}
+          >
             {tabs?.map((tab) => (
               <Box key={tab.index}>
                 <TabCard {...tab}></TabCard>
               </Box>
             ))}
           </AccordionDetails>
-        </Accordion> 
+        </Accordion>
       ))}
     </Box>
   );

@@ -32,7 +32,8 @@ const card = (
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="small" sx={{color: 'red'}}>Delete</Button>
+      <Button size="small" sx={{color: 'green'}}>Open Tab</Button>
+      <Button size="small" sx={{color: 'red'}}>Delete Tab</Button>
     </CardActions>
   </React.Fragment>
 );
