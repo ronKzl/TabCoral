@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { useDispatch } from 'react-redux';
 import { setSessions } from './sessionSlice';
@@ -6,9 +6,17 @@ import Box from '@mui/material/Box';
 // import WorkflowSlider from './components/WorkflowSlider';
 import TabWindow from './components/TabWindow';
 import GroupWindow from './components/GroupWindow';
+import Switch from '@mui/material/Switch';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
 function App() {
+  const label = { inputProps: { 'aria-label': 'Color switch demo' } };
+  const [isChecked, setIsChecked] = useState(true)
 
+  const handleViewChange = (event: any) => {
+    setIsChecked(event.target.checked)
+  } 
   const dispatch = useDispatch();
   useEffect(() => {
     //mount array [each entry is 1 session that can be reconstructed]
@@ -32,11 +40,14 @@ function App() {
 
   return (
     <>
-      <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
-          This Box renders as an HTML section element.
-          {/* <WorkflowSlider /> */}
-          <GroupWindow />
-          <TabWindow />
+    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+        <Typography>Tab View</Typography>
+        <Switch {...label} color="default" onChange={handleViewChange}/>
+        <Typography>Group View</Typography>
+      </Stack>
+    <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+          {isChecked &&  <GroupWindow /> }
+          {!isChecked && <TabWindow />}
     </Box>
     </>
   )
