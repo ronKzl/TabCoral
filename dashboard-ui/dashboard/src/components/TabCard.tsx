@@ -9,9 +9,17 @@ import CardMedia from '@mui/material/CardMedia';
 import {type tab} from "../interfaces/session"
 
 
-function TabCard( {favicon, url, title} : tab){
+function TabCard( {favicon, url, title, index} : tab){
       
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    console.log("here tab is opening up")
+    chrome.tabs.create({active: true, index: index, url: url})
+    event.stopPropagation();
+  };
+
 const card = (
+  
   <React.Fragment>
     <CardContent sx = {{maxHeight: 150}}>
       <Typography gutterBottom sx={{ color: 'text.secondary', fontSize: 14 }}>
@@ -32,7 +40,7 @@ const card = (
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="small" sx={{color: 'green'}}>Open Tab</Button>
+      <Button size="small" sx={{color: 'green'}} onClick={handleClick}>Open Tab</Button>
       <Button size="small" sx={{color: 'red'}}>Delete Tab</Button>
     </CardActions>
   </React.Fragment>
