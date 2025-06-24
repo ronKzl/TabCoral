@@ -13,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 
 function GroupWindow() {
+  
   const tabs = useSessionSelector(
     (state) => state.sessions[0]?.userData.tabGroups ?? {}
   );
@@ -23,12 +24,22 @@ function GroupWindow() {
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  
+  const [selectedGroupId, setSelectedGroupId] = useState('-1')
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, id:string) => {
+    setSelectedGroupId(id)
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+  
+  const handleGroupOpen = () => {
+    // chrome.tabs.group({createProperties : {groupId: id }}) 
+    console.log(selectedGroupId)
+    handleClose();
+  }
 
   const tabColorMap: Record<string, string> = {
     grey: "#5f6368",
@@ -51,11 +62,11 @@ function GroupWindow() {
             expandIcon={<ExpandMoreIcon />}
           >
             <Box>
-              {" "}
+              {id} {" "}
               {groupInfo[id]?.title ?? "Ungrouped"} ({tabs.length})
             </Box>
             <Box sx={{ ml: "auto", display: "flex", gap: 1 }}>
-              <IconButton size="small" onClick={(e) => {handleClick(e); e.stopPropagation();}}>
+              <IconButton size="small" onClick={(e) => {handleMenuOpen(e, id); e.stopPropagation();}}>
                 <MoreVertIcon />
               </IconButton>
               <Menu
@@ -69,8 +80,8 @@ function GroupWindow() {
                   },
                 }}
               >
-                <MenuItem onClick={handleClose}> <FolderOpenIcon /> Open Group</MenuItem>
-                <MenuItem onClick={handleClose}> <DeleteIcon /> Delete Group </MenuItem>
+                <MenuItem onClick={(e) => {handleGroupOpen(), e.stopPropagation();}}> <FolderOpenIcon /> Open Group</MenuItem>
+                <MenuItem key={id} onClick={(e) => {handleClose(), e.stopPropagation();}}> <DeleteIcon /> Remove From Session </MenuItem>
               </Menu>
             </Box>
           </AccordionSummary>

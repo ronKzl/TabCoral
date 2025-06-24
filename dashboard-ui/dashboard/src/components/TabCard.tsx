@@ -41,7 +41,7 @@ const card = (
     </CardContent>
     <CardActions>
       <Button size="small" sx={{color: 'green'}} onClick={handleClick}>Open Tab</Button>
-      <Button size="small" sx={{color: 'red'}}>Delete Tab</Button>
+      <Button size="small" sx={{color: 'red'}}>Remove From Session</Button>
     </CardActions>
   </React.Fragment>
 );
