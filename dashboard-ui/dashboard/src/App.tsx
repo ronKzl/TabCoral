@@ -14,7 +14,7 @@ function App() {
   const label = { inputProps: { 'aria-label': 'Color switch demo' } };
   const [isChecked, setIsChecked] = useState(true)
 
-  const handleViewChange = (event: any) => {
+  const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked)
   } 
   const dispatch = useDispatch();
