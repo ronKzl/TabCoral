@@ -61,6 +61,7 @@ chrome.tabs.query({ currentWindow: true }, (tabs) => {
       favicon: tab.favIconUrl,
       title: tab.title,
       url: tab.url,
+      id: tab.id,
     });
     //save the order as well
     orderedEntries.push({
@@ -69,6 +70,7 @@ chrome.tabs.query({ currentWindow: true }, (tabs) => {
       favicon: tab.favIconUrl,
       title: tab.title,
       url: tab.url,
+      id: tab.id,
     });
   });
   formGroupInfo().then(() => {
