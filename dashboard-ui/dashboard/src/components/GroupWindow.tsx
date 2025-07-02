@@ -62,6 +62,10 @@ function GroupWindow() {
     handleClose();
   }
 
+  const handleGroupDeletion = () => {
+
+    handleClose();
+  }
 
   const tabColorMap: Record<string, string> = {
     grey: "#5f6368",
@@ -85,8 +89,9 @@ function GroupWindow() {
           >
             <Box sx={{
               color: `${tabColorMap[groupInfo[id]?.color] ?? "black"}`,
+              fontSize: "1.25rem"
             }}>
-              {id} {" "}
+             {" "}
               {groupInfo[id]?.title ?? "Ungrouped"} ({tabs.length})
             </Box>
             <Box sx={{ ml: "auto", display: "flex", gap: 1 }}>
@@ -105,7 +110,7 @@ function GroupWindow() {
                 }}
               >
                 <MenuItem onClick={(e) => {handleGroupOpen(), e.stopPropagation();}}> <FolderOpenIcon /> Open Group</MenuItem>
-                <MenuItem key={id} onClick={(e) => {handleClose(), e.stopPropagation();}}> <DeleteIcon /> Remove From Session </MenuItem>
+                <MenuItem key={id} onClick={(e) => {handleGroupDeletion(), e.stopPropagation();}}> <DeleteIcon /> Remove From Session </MenuItem>
               </Menu>
             </Box>
           </AccordionSummary>

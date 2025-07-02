@@ -46,7 +46,7 @@ function App() {
         <Switch {...label} color="default" onChange={handleViewChange}/>
         <Typography>Group View</Typography>
       </Stack>
-    <Box component="section" sx={{ p: 2, border: '1px dashed grey' }}>
+    <Box component="section" sx={{ p: 2 }}>
           {isChecked &&  <GroupWindow /> }
           {!isChecked && <TabWindow />}
     </Box>

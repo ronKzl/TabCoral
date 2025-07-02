@@ -9,14 +9,30 @@ import CardMedia from '@mui/material/CardMedia';
 import {type tab} from "../interfaces/session"
 
 
-function TabCard( {favicon, url, title, index} : tab){
+function TabCard( {favicon, url, title, index, id} : tab){
       
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleTabOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     console.log("here tab is opening up")
     chrome.tabs.create({active: true, index: index, url: url})
     event.stopPropagation();
   };
+
+  async function handleTabRemoval(event: React.MouseEvent<HTMLButtonElement>) {
+    //popup are you sure window
+    
+    //if its open in the session close it
+    let result = await chrome.tabs.get(id)
+    if (result !== undefined){
+      chrome.tabs.remove(id);
+    }
+
+    //remove from database
+    
+
+
+    event.stopPropagation();
+  }
 
 const card = (
   
@@ -40,8 +56,8 @@ const card = (
       </Typography>
     </CardContent>
     <CardActions>
-      <Button size="small" sx={{color: 'green'}} onClick={handleClick}>Open Tab</Button>
-      <Button size="small" sx={{color: 'red'}}>Remove From Session</Button>
+      <Button size="small" sx={{color: 'green'}} onClick={handleTabOpen}>Open Tab</Button>
+      <Button size="small" sx={{color: 'red'}} onClick={handleTabRemoval}>Remove From Session</Button>
     </CardActions>
   </React.Fragment>
 );
