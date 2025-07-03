@@ -10,39 +10,37 @@ import { type tab } from "../interfaces/session";
 import AlertDialog from "./Actions/AlertBox";
 
 function TabCard({ favicon, url, title, index, id }: tab) {
+  
   const handleTabOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     chrome.tabs.create({ active: true, index: index, url: url });
+    //get id and update in db
     event.stopPropagation();
   };
 
   const [isDialogOpen, setOpen] = React.useState(false);
+
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
-    console.log("I am closing");
+    //show abort snackbar
     setOpen(false);
   };
 
   //event: React.MouseEvent<HTMLButtonElement>
   async function handleTabRemoval() {
-    //popup are you sure window - redo with MUI
-    handleClickOpen();
-    console.log(id);
-    // let text = `Remove ${title} from your current saved session?\nThis opeartion can not be undone.`;
-    // if (confirm(text) == true) {
-    //   let result = await chrome.tabs.get(id);
-    //   if (result !== undefined) {
-    //     chrome.tabs.remove(id);
-    //   }
+    handleClose();
+    
+    let result = await chrome.tabs.get(id);
+    if (result !== undefined) {
+      chrome.tabs.remove(id);
+    }
     //   //remove from database
-
+    
     //   //show snackbar
 
-    // }
-    //show abort snackbar
   }
 
   const card = (
@@ -64,7 +62,7 @@ function TabCard({ favicon, url, title, index, id }: tab) {
           />
         </Typography>
         <Typography noWrap variant="h5" component="div">
-          <a href={url}>{title}</a>
+          <a target="_blank" href={url}>{title}</a>
         </Typography>
       </CardContent>
       <CardActions>
@@ -75,7 +73,7 @@ function TabCard({ favicon, url, title, index, id }: tab) {
           size="small"
           sx={{ color: "red" }}
           onClick={(e) => {
-            handleTabRemoval(), e.stopPropagation();
+            handleClickOpen(), e.stopPropagation();
           }}
         >
           Remove From Session
@@ -93,6 +91,7 @@ function TabCard({ favicon, url, title, index, id }: tab) {
         close={() => handleClose()}
         title={`Remove ${title} from your current saved session?\n`}
         content={"This action can't be undone."}
+        onAgreeClick={() => {handleTabRemoval()}}
       />
     </Box>
   );

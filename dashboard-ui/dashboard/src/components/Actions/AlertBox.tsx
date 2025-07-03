@@ -8,12 +8,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 interface AlertDialogProps {
     open: boolean,
-    close: any,
+    close: React.MouseEventHandler<HTMLButtonElement> | undefined, //<- idk used in multiple contexts
     title: string,
-    content?: string
+    content?: string,
+    onAgreeClick?: React.MouseEventHandler<HTMLButtonElement> | undefined
 }
 
-export default function AlertDialog({title, open, close, content}: AlertDialogProps) {
+export default function AlertDialog({title, open, close, content, onAgreeClick}: AlertDialogProps) {
   
   return (
     <React.Fragment>
@@ -33,7 +34,7 @@ export default function AlertDialog({title, open, close, content}: AlertDialogPr
         </DialogContent>
         <DialogActions>
           <Button onClick={close} autoFocus>No</Button>
-          <Button onClick={close}>
+          <Button onClick={onAgreeClick}>
             Yes
           </Button>
         </DialogActions>
