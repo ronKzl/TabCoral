@@ -14,7 +14,7 @@ interface AlertDialogProps {
     onAgreeClick?: React.MouseEventHandler<HTMLButtonElement> | undefined
 }
 
-export default function AlertDialog({title, open, close, content, onAgreeClick}: AlertDialogProps) {
+function AlertDialog({title, open, close, content, onAgreeClick}: AlertDialogProps) {
   
   return (
     <React.Fragment>
@@ -42,3 +42,5 @@ export default function AlertDialog({title, open, close, content, onAgreeClick}:
     </React.Fragment>
   );
 }
+
+export default AlertDialog;
