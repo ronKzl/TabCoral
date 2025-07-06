@@ -15,7 +15,7 @@ interface PopUpState {
   message: string;
   status: "success" | "info" | "warning" | "error";
   variant: "standard" | "filled" | "outlined";
-  duration: number
+  duration: number;
 }
 
 function TabCard({ favicon, url, title, index, id }: tab) {
@@ -27,9 +27,13 @@ function TabCard({ favicon, url, title, index, id }: tab) {
 
   const [isDialogOpen, setOpen] = React.useState(false);
 
-  const [popUp, setPopUpOpen] = React.useState<PopUpState>({ open: false, duration: 0, message: "", status: "info", variant: "outlined" });
-
-
+  const [popUp, setPopUpOpen] = React.useState<PopUpState>({
+    open: false,
+    duration: 0,
+    message: "",
+    status: "info",
+    variant: "outlined",
+  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -38,23 +42,77 @@ function TabCard({ favicon, url, title, index, id }: tab) {
   const handleClose = () => {
     setOpen(false);
     //show abort snackbar
-    setPopUpOpen({open: true, duration: 3000, message: "Operation Cancelled", status: "warning", variant: "standard" })
+    setPopUpOpen({
+      open: true,
+      duration: 3000,
+      message: "Operation Cancelled",
+      status: "warning",
+      variant: "standard",
+    });
   };
 
   //event: React.MouseEvent<HTMLButtonElement>
   async function handleTabRemoval() {
-    handleClose();
-
+    let success: boolean = false;
     let result = await chrome.tabs.get(id);
     if (result !== undefined) {
-      console.log(`remopved ${id}`);
-      //chrome.tabs.remove(id); Uncomment when DB is setup.
+      //chrome.tabs.remove(id);
     }
-    //remove from database
-
-    //show snackbar
-     setPopUpOpen({open: true, duration: 5000, message: "Tab succesfully removed from current session!", status: "success", variant: "filled" })
+    //remove from database orderedEntries - query for it
+    let sessions_db = await chrome.storage.local.get("sessions");
+    //at 0 will be session_index - add here when sessions will be added
+  
+    if (sessions_db.sessions[0] != undefined) {
+      //find what group the tab belongs to and then filter it out of the array
+      let orderedEntries = sessions_db.sessions[0].userData.orderedEntries;
+      let gId = orderedEntries.find((tab: tab) => tab.id === id)?.groupId;
+      
+      let newOrder = orderedEntries.filter((tab: tab) => tab.id != id);
     
+      //now remove the tab from the group
+
+      console.log(`trying to filter by groups`);
+      if (
+        gId != undefined &&
+        gId in sessions_db.sessions[0].userData.tabGroups
+      ) {
+        let newGroup = sessions_db.sessions[0].userData.tabGroups[gId].filter(
+          (tab: tab) => tab.id != id
+        );
+        //set the modified arrays as new memebers
+        sessions_db.sessions[0].userData.orderedEntries = newOrder;
+        sessions_db.sessions[0].userData.tabGroups[gId] = newGroup;
+
+        console.log("New db before saving!");
+        console.log(sessions_db.sessions[0]);
+
+        console.log("attempting to save");
+        //let arr = [sessions_db]
+        let res = await chrome.storage.local.set({ sessions: sessions_db.sessions  });
+        console.log(res);
+        success = true;
+      }
+    }
+    console.log("here??")
+    if (success) {
+      setPopUpOpen({
+        open: true,
+        duration: 5000,
+        message: "Tab succesfully removed from current session!",
+        status: "success",
+        variant: "filled",
+      });
+    } else {
+      setPopUpOpen({
+        open: true,
+        duration: 8000,
+        message:
+          "Error: Either current session was not found or tab identification has changed, please attempt to save session and try again.",
+        status: "error",
+        variant: "filled",
+      });
+    }
+     console.log("there??")
   }
 
   const card = (
@@ -112,12 +170,13 @@ function TabCard({ favicon, url, title, index, id }: tab) {
         }}
       />
       <PopUpBar
+        key={popUp.message + popUp.status}
         duration={popUp.duration}
         message={popUp.message}
         statusColor={popUp.status}
         style={popUp.variant}
         isOpen={popUp.open}
-        handleClick={() => setPopUpOpen({...popUp, open: false})}
+        handleClick={() => setPopUpOpen({ ...popUp, open: false })}
       />
     </Box>
   );

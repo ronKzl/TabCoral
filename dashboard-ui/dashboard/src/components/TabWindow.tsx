@@ -13,6 +13,8 @@ function TabWindow() {
             return "None - start saving now!"
         }
         else{
+            console.log("I am here doing sessions[0].id should work??")
+            console.log(state.sessions[0].id)
             return state.sessions[0].id
         }
     })

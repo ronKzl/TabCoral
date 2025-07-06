@@ -29,6 +29,7 @@ function App() {
 
     chrome.storage.onChanged.addListener((changes, area) => {
     if (area === 'local' && changes.sessions) {
+      chrome.storage.local.get('sessions').then(console.log)
       chrome.storage.local.get('sessions').then((store) => {
         console.log("Updated sessions:", store.sessions); 
         dispatch(setSessions(store.sessions || []));
