@@ -8,32 +8,25 @@ import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
 import { type tab } from "../interfaces/session";
 import AlertDialog from "./Actions/AlertBox";
-import PopUpBar from "./Actions/PopUpBar";
+import {type PopUpState} from "../App"
 
-interface PopUpState {
-  open: boolean;
-  message: string;
-  status: "success" | "info" | "warning" | "error";
-  variant: "standard" | "filled" | "outlined";
-  duration: number;
+interface TabCardProps {
+  favicon: string;
+  setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
+  index: number;
+  title: string;
+  url: string;
+  id: number;
 }
 
-function TabCard({ favicon, url, title, index, id }: tab) {
+function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps) {
+  
   const handleTabOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     chrome.tabs.create({ active: true, index: index, url: url });
-    //get id and update in db
     event.stopPropagation();
   };
 
   const [isDialogOpen, setOpen] = React.useState(false);
-
-  const [popUp, setPopUpOpen] = React.useState<PopUpState>({
-    open: false,
-    duration: 0,
-    message: "",
-    status: "info",
-    variant: "outlined",
-  });
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -45,18 +38,18 @@ function TabCard({ favicon, url, title, index, id }: tab) {
     setPopUpOpen({
       open: true,
       duration: 3000,
-      message: "Operation Cancelled",
+      message: "Tab Remove Operation Cancelled.",
       status: "warning",
       variant: "standard",
     });
   };
 
-  //event: React.MouseEvent<HTMLButtonElement>
+  
   async function handleTabRemoval() {
     let success: boolean = false;
     let result = await chrome.tabs.get(id);
     if (result !== undefined) {
-      //chrome.tabs.remove(id);
+      //chrome.tabs.remove(id); 
     }
     //remove from database orderedEntries - query for it
     let sessions_db = await chrome.storage.local.get("sessions");
@@ -93,7 +86,6 @@ function TabCard({ favicon, url, title, index, id }: tab) {
         success = true;
       }
     }
-    console.log("here??")
     if (success) {
       setPopUpOpen({
         open: true,
@@ -112,7 +104,6 @@ function TabCard({ favicon, url, title, index, id }: tab) {
         variant: "filled",
       });
     }
-     console.log("there??")
   }
 
   const card = (
@@ -169,7 +160,7 @@ function TabCard({ favicon, url, title, index, id }: tab) {
           handleTabRemoval();
         }}
       />
-      <PopUpBar
+      {/* <PopUpBar
         key={popUp.message + popUp.status}
         duration={popUp.duration}
         message={popUp.message}
@@ -177,7 +168,7 @@ function TabCard({ favicon, url, title, index, id }: tab) {
         style={popUp.variant}
         isOpen={popUp.open}
         handleClick={() => setPopUpOpen({ ...popUp, open: false })}
-      />
+      /> */}
     </Box>
   );
 }

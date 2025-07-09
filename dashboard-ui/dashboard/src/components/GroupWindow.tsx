@@ -11,9 +11,13 @@ import { useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
+import { type PopUpState } from "../App";
 
+interface GroupWindowProps {
+    setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
+}
 
-function GroupWindow() {
+function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   
   const tabs = useSessionSelector(
     (state) => state.sessions[0]?.userData.tabGroups ?? {}
@@ -121,7 +125,7 @@ function GroupWindow() {
           >
             {tabs?.map((tab) => (
               <Box key={tab.index}>
-                <TabCard {...tab}></TabCard>
+                <TabCard id = {tab.id} favicon= {tab.favicon}  url={tab.url} title={tab.title} index={tab.index} setPopUpOpen ={setPopUpOpen}></TabCard>
               </Box>
             ))}
           </AccordionDetails>

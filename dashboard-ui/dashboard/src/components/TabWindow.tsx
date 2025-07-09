@@ -3,8 +3,13 @@ import Grid from '@mui/material/Grid';
 import {  type sessions } from '../interfaces/session';
 import { useSelector } from 'react-redux';
 import TabCard from './TabCard';
+import { type PopUpState } from '../App';
 
-function TabWindow() {   
+interface TabWindowProps {
+    setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
+}
+
+function TabWindow({setPopUpOpen}: TabWindowProps) {   
     //data retrieveal is happening from the redux store! ()
     const Alldata = useSelector((state: sessions) => state.sessions)
     //when array is not here cant read props of undefined
@@ -34,7 +39,8 @@ function TabWindow() {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
         {tabs?.map((tab) => <Grid key = {tab.index} size={{ xs: 2, sm: 4, md: 4 }}>
-            <TabCard {...tab} ></TabCard>
+            <TabCard id = {tab.id} favicon= {tab.favicon}  url={tab.url} title={tab.title} index={tab.index} setPopUpOpen ={setPopUpOpen} ></TabCard>
+            {/* <TabCard {...tab} ></TabCard> */}
           </Grid>)}
       </Grid>
     </Box>
