@@ -160,15 +160,6 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
           handleTabRemoval();
         }}
       />
-      {/* <PopUpBar
-        key={popUp.message + popUp.status}
-        duration={popUp.duration}
-        message={popUp.message}
-        statusColor={popUp.status}
-        style={popUp.variant}
-        isOpen={popUp.open}
-        handleClick={() => setPopUpOpen({ ...popUp, open: false })}
-      /> */}
     </Box>
   );
 }

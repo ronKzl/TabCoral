@@ -12,6 +12,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { type PopUpState } from "../App";
+import AlertDialog from "./Actions/AlertBox";
 
 interface GroupWindowProps {
     setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
@@ -25,8 +26,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   const groupInfo = useSessionSelector(
     (state) => state.sessions[0]?.userData.groupInfo ?? {}
   ) as Record<string, group>;
-  console.log(groupInfo);
-  console.log(tabs)
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   
@@ -37,9 +37,22 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
     setAnchorEl(event.currentTarget);
   };
 
+  const [alertDialogState, setalertDialogState] = useState({isOpen:false,text:""});
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleAlertBoxClose = () => {
+    setalertDialogState({isOpen:false, text:""})
+    setPopUpOpen({
+      open: true,
+      duration: 3000,
+      message: "Group Remove Operation Cancelled.",
+      status: "warning",
+      variant: "standard",
+    });
+  }
   
   async function handleGroupOpen() {
     //open the tabs that belonged in this group
@@ -62,12 +75,27 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
     //update the groupId and newTabs id in the database OR lazy way call aggreagator.js to scrape again somehow? just that group and update it?
     //or no need? -> currently functionality works as intended
     
-    //close dialog
+    //close the dropdown
     handleClose();
   }
 
-  const handleGroupDeletion = () => {
+  //TODO
+  async function handleGroupRemovalFromSession() {
+    setalertDialogState({isOpen:false, text:""})
+    console.log(`Will now remove session and tabs associated with ${selectedGroupId}`)
+    setPopUpOpen({
+        open: true,
+        duration: 5000,
+        message: "Group & Tabs succesfully removed from current session!",
+        status: "success",
+        variant: "filled",
+      });
+  }
 
+  const openGroupDeletionDialog = () => {
+    //set state for the dialog
+    let groupName = groupInfo[selectedGroupId.toString()]?.title ?? "Ungrouped"
+    setalertDialogState({isOpen:true, text:`Remove ${groupName} from your current saved groups for this session?\n`})
     handleClose();
   }
 
@@ -95,7 +123,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
               color: `${tabColorMap[groupInfo[id]?.color] ?? "black"}`,
               fontSize: "1.25rem"
             }}>
-             {" "}
+             {id}  {" "}   
               {groupInfo[id]?.title ?? "Ungrouped"} ({tabs.length})
             </Box>
             <Box sx={{ ml: "auto", display: "flex", gap: 1 }}>
@@ -114,7 +142,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
                 }}
               >
                 <MenuItem onClick={(e) => {handleGroupOpen(), e.stopPropagation();}}> <FolderOpenIcon /> Open Group</MenuItem>
-                <MenuItem key={id} onClick={(e) => {handleGroupDeletion(), e.stopPropagation();}}> <DeleteIcon /> Remove From Session </MenuItem>
+                <MenuItem key={id} onClick={(e) => {openGroupDeletionDialog(), e.stopPropagation();}}> <DeleteIcon /> Remove From Session </MenuItem>
               </Menu>
             </Box>
           </AccordionSummary>
@@ -131,6 +159,15 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
           </AccordionDetails>
         </Accordion>
       ))}
+      <AlertDialog
+                open={alertDialogState.isOpen}
+                close={() => handleAlertBoxClose()}
+                title={alertDialogState.text}
+                content={"This operation will remove the current group and its associated tabs from the session and can't be undone."}
+                onAgreeClick={() => {
+                 handleGroupRemovalFromSession()
+                }}
+              />
     </Box>
   );
 }
