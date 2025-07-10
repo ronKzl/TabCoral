@@ -18,6 +18,19 @@ interface GroupWindowProps {
     setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
 
+const tabColorMap: Record<string, string> = {
+    grey: "#5f6368",
+    blue: "#1a73e8",
+    cyan: "#007b83",
+    green: "#188038",
+    orange: "#fa903e",
+    pink: "#d01884",
+    purple: "#a142f4",
+    red: "#d93025",
+    yellow: "#f9ab00",
+  };
+
+
 function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   
   const tabs = useSessionSelector(
@@ -98,18 +111,6 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
     setalertDialogState({isOpen:true, text:`Remove ${groupName} from your current saved groups for this session?\n`})
     handleClose();
   }
-
-  const tabColorMap: Record<string, string> = {
-    grey: "#5f6368",
-    blue: "#1a73e8",
-    cyan: "#007b83",
-    green: "#188038",
-    orange: "#fa903e",
-    pink: "#d01884",
-    purple: "#a142f4",
-    red: "#d93025",
-    yellow: "#f9ab00",
-  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
