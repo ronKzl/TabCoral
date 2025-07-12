@@ -36,6 +36,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   const tabs = useSessionSelector(
     (state) => state.sessions[0]?.userData.tabGroups ?? {}
   );
+
   const groupInfo = useSessionSelector(
     (state) => state.sessions[0]?.userData.groupInfo ?? {}
   ) as Record<string, group>;
@@ -43,7 +44,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   
-  const [selectedGroupId, setSelectedGroupId] = useState(-1)
+  const [selectedGroupId, setSelectedGroupId] = useState(-2)
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, id:string) => {
     setSelectedGroupId(parseInt(id))
@@ -96,6 +97,52 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   async function handleGroupRemovalFromSession() {
     setalertDialogState({isOpen:false, text:""})
     console.log(`Will now remove session and tabs associated with ${selectedGroupId}`)
+    let success = false
+    //first remove all the tabs that belong to that group from the session
+    //then remove data about the group itself
+    //we have tabGroups and groupInfo
+    //tabGroups at current highlhited group will provide us with what tabs to remove 
+    //need to call the same function from TabCard
+    //then can 
+    //first get the state from the DB
+    let sessions_db = await chrome.storage.local.get("sessions");
+
+    //[0] here will become session_index on next stage
+    if (sessions_db.sessions[0] != undefined) {
+      let currentSession = sessions_db.sessions[0]
+      
+      //We can then get all the tab Ids from tabGroups from the tabs
+      let groupTabsRemove = Object.entries(tabs).find(([id, _]) => id === selectedGroupId.toString())?.[1]
+      console.log(groupTabsRemove) 
+      
+      //Filter the ordered Entities based on the ids to not have them
+      if (groupTabsRemove != undefined  && groupTabsRemove.length != 0){
+          console.log("Tab Removal is happening here!")
+          let orderedEntries = currentSession.userData.orderedEntries
+          console.log(orderedEntries)
+          
+      }
+
+      // Then we want to filter out the tabGroups such that it does not have that group anymore
+      let newGroupInfo = Object.entries(tabs).filter(([id, _]) => id != selectedGroupId.toString())
+      console.log("Removed the group and its tabs from tabGroups:")
+      console.log(newGroupInfo)
+      
+      //And if the group is not -1 we want to filter out groupInfo so that it does not have any info on that group
+      if (selectedGroupId != -1){
+        console.log("Trying to delete it from the cosmetic group")
+        console.log(groupInfo)
+        console.log(groupInfo[selectedGroupId.toString()])
+        const modifiedGroupInfo = {... groupInfo} //copy first to mutate
+        let newTabGroup = Object.entries(delete modifiedGroupInfo[selectedGroupId.toString()])
+        console.log(newTabGroup)
+      }
+      //Set state for the selectedGroupId to be something else
+      setSelectedGroupId(-2)
+      //Attempt to save the new modified state to the db
+    }
+    
+    console.log(success)
     setPopUpOpen({
         open: true,
         duration: 5000,

@@ -47,10 +47,11 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
   
   async function handleTabRemoval() {
     let success: boolean = false;
-    let result = await chrome.tabs.get(id);
-    if (result !== undefined) {
-      //chrome.tabs.remove(id); 
-    }
+    //TODO: Think architectually if it makes sense to close the tab if its currently open
+    // let result = await chrome.tabs.get(id);
+    // if (result !== undefined) {
+    //   //chrome.tabs.remove(id); 
+    // }
     //remove from database orderedEntries - query for it
     let sessions_db = await chrome.storage.local.get("sessions");
     //at 0 will be session_index - add here when sessions will be added
@@ -62,9 +63,7 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
       
       let newOrder = orderedEntries.filter((tab: tab) => tab.id != id);
     
-      //now remove the tab from the group
-
-      console.log(`trying to filter by groups`);
+      //now remove the tab from its associated group
       if (
         gId != undefined &&
         gId in sessions_db.sessions[0].userData.tabGroups
