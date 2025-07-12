@@ -13,6 +13,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { type PopUpState } from "../App";
 import AlertDialog from "./Actions/AlertBox";
+import { type tab } from "../interfaces/session";
 
 interface GroupWindowProps {
     setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
@@ -93,17 +94,12 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
     handleClose();
   }
 
-  //TODO
+  
   async function handleGroupRemovalFromSession() {
     setalertDialogState({isOpen:false, text:""})
     console.log(`Will now remove session and tabs associated with ${selectedGroupId}`)
     let success = false
-    //first remove all the tabs that belong to that group from the session
-    //then remove data about the group itself
-    //we have tabGroups and groupInfo
-    //tabGroups at current highlhited group will provide us with what tabs to remove 
-    //need to call the same function from TabCard
-    //then can 
+    
     //first get the state from the DB
     let sessions_db = await chrome.storage.local.get("sessions");
 
@@ -114,42 +110,65 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
       //We can then get all the tab Ids from tabGroups from the tabs
       let groupTabsRemove = Object.entries(tabs).find(([id, _]) => id === selectedGroupId.toString())?.[1]
       console.log(groupTabsRemove) 
-      
+      let tabIds = groupTabsRemove?.map((t: tab) => t.id)
+      console.log(tabIds) 
       //Filter the ordered Entities based on the ids to not have them
-      if (groupTabsRemove != undefined  && groupTabsRemove.length != 0){
+      if (tabIds != undefined  && tabIds.length != 0){
           console.log("Tab Removal is happening here!")
           let orderedEntries = currentSession.userData.orderedEntries
           console.log(orderedEntries)
-          
+          console.log(orderedEntries.length)
+          let newOrderedEntries = orderedEntries.filter((t: tab) => !(tabIds.includes(t.id)))
+          console.log(newOrderedEntries)
+          console.log(newOrderedEntries.length)
+          currentSession.userData.orderedEntries = newOrderedEntries
       }
 
       // Then we want to filter out the tabGroups such that it does not have that group anymore
-      let newGroupInfo = Object.entries(tabs).filter(([id, _]) => id != selectedGroupId.toString())
+      let newGroupInfo = Object.fromEntries(Object.entries(tabs).filter(([id, _]) => id != selectedGroupId.toString()))
       console.log("Removed the group and its tabs from tabGroups:")
       console.log(newGroupInfo)
-      
+      currentSession.userData.tabGroups = newGroupInfo
       //And if the group is not -1 we want to filter out groupInfo so that it does not have any info on that group
       if (selectedGroupId != -1){
         console.log("Trying to delete it from the cosmetic group")
         console.log(groupInfo)
         console.log(groupInfo[selectedGroupId.toString()])
         const modifiedGroupInfo = {... groupInfo} //copy first to mutate
-        let newTabGroup = Object.entries(delete modifiedGroupInfo[selectedGroupId.toString()])
-        console.log(newTabGroup)
+        delete modifiedGroupInfo[selectedGroupId.toString()]
+        currentSession.userData.groupInfo = modifiedGroupInfo
       }
       //Set state for the selectedGroupId to be something else
       setSelectedGroupId(-2)
       //Attempt to save the new modified state to the db
+      console.log("New db before saving!");
+      console.log(currentSession)
+      console.log("attempting to save");
+                                                          //when session implemented will ovverid cur_session id
+      let res = await chrome.storage.local.set({ sessions: [currentSession]  });
+      console.log(res);
+      success = true
     }
     
-    console.log(success)
-    setPopUpOpen({
+    if (success){
+      setPopUpOpen({
         open: true,
         duration: 5000,
         message: "Group & Tabs succesfully removed from current session!",
         status: "success",
         variant: "filled",
       });
+    }else {
+      setPopUpOpen({
+        open: true,
+        duration: 8000,
+        message:
+          "Error: Current group was not found in local storage, attempt to reload the page and try again.",
+        status: "error",
+        variant: "filled",
+      });
+    }
+    
   }
 
   const openGroupDeletionDialog = () => {
