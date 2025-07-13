@@ -1,27 +1,32 @@
-import * as React from 'react';
+// import * as React from 'react';
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+// import ListItemButton from '@mui/material/ListItemButton';
+// import ListItemText from '@mui/material/ListItemText';
+// import Collapse from '@mui/material/Collapse';
+// import ExpandLess from '@mui/icons-material/ExpandLess';
+// import ExpandMore from '@mui/icons-material/ExpandMore';
 // import Divider from '@mui/material/Divider'; //TODO -> Figure out why divider is not rendering
 // import ListItemIcon from '@mui/material/ListItemIcon';
 // import InboxIcon from '@mui/icons-material/MoveToInbox';
 // import DraftsIcon from '@mui/icons-material/Drafts';
 // import SendIcon from '@mui/icons-material/Send';
 // import StarBorder from '@mui/icons-material/StarBorder';
+import { useSessionSelector } from "../../hooks";
+import {type session} from "../../interfaces/session"
+import ProfileListItem from "./ProfileListItem"
 
-export default function NestedList() {
-  const [open, setOpen] = React.useState(true);
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
+export default function ProfilesList() {
+  // const [open, setOpen] = React.useState(true);
+  const sessions = useSessionSelector((state) => (
+    state.sessions ?? []
+  )) 
+  
+  // const handleClick = () => {
+  //   setOpen(!open);
+  // };
 
   return (
-    //TODO -> Generate the List based on the profiles -> possible extract ListItemButton to its own component
     <List
       sx={{ width: '100%', maxWidth: 360}}
       component="nav"
@@ -32,13 +37,11 @@ export default function NestedList() {
         </ListSubheader>
       }
     >
-      <ListItemButton>
-        <ListItemText primary="Profile 1" />
-      </ListItemButton>
-      <ListItemButton>
-        <ListItemText primary="Gaming" />
-      </ListItemButton>
-      <ListItemButton onClick={handleClick}>
+        {/* Create all the listItemButtons */}
+        {sessions.map((entry: session, index: number) => (<ProfileListItem session_id={entry.id} session_index={index}/>))}
+      
+      {/* THIS FOR LATER WHEN DISPLAYING MORE INFO ON WHAT IS IN A PROFILE */}
+      {/* <ListItemButton onClick={handleClick}>
         <ListItemText primary="Study" />
         {open ? <ExpandLess /> : <ExpandMore />}
       </ListItemButton>
@@ -48,7 +51,7 @@ export default function NestedList() {
             <ListItemText primary="Relax" />
           </ListItemButton>
         </List>
-      </Collapse>
+      </Collapse> */}
     </List>
   );
 }

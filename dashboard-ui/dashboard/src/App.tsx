@@ -10,7 +10,7 @@ import Switch from "@mui/material/Switch";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import PopUpBar from "./components/Actions/PopUpBar";
-import ProfilesList from "./components/ProfilesList";
+import ProfilesList from "./components/Lists/ProfilesList";
 import Grid from "@mui/material/Grid";
 export interface PopUpState {
   open: boolean;
@@ -21,7 +21,7 @@ export interface PopUpState {
 }
 
 function App() {
-  const label = { inputProps: { "aria-label": "Color switch demo" } };
+  const label = { inputProps: { "aria-label": "switch between group and tab view" } };
   const [isChecked, setIsChecked] = useState(false);
 
   const [popUp, setPopUpOpen] = useState<PopUpState>({
@@ -48,6 +48,7 @@ function App() {
     setIsChecked(event.target.checked);
   };
   const dispatch = useDispatch();
+  
   useEffect(() => {
     //mount array [each entry is 1 session that can be reconstructed]
     //sessions collection of session that consists of -> (ordered tabs, group metadata, tab metadata)
@@ -66,6 +67,7 @@ function App() {
       }
     });
   }, []);
+
 
   return (
     <Box sx={{ flexGrow: 1 }}>
