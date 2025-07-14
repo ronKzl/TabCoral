@@ -1,19 +1,19 @@
 import Box from "@mui/material/Box";
-import { useSessionSelector } from "../hooks";
+import { useAppSelector } from "../hooks";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import TabCard from "./TabCard";
 import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { type group} from "../interfaces/session";
 import { useState } from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import { type PopUpState } from "../App";
 import AlertDialog from "./Actions/AlertBox";
-import { type tab } from "../interfaces/session";
+import { type tab, type sessions, type group, type session } from "../interfaces/session";
+import { useSelector } from 'react-redux';
 
 interface GroupWindowProps {
     setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
@@ -34,25 +34,37 @@ const tabColorMap: Record<string, string> = {
 
 function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   
-  const tabs = useSessionSelector(
-    (state) => state.sessions[0]?.userData.tabGroups ?? {}
-  );
+  const sessions = useSelector((state: sessions) => state.sessions)
+  const selectedIndex = useAppSelector((state) => state.profile.selectedIndex)
+  
+  const [selectedGroupId, setSelectedGroupId] = useState('-2') 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); 
+  const [alertDialogState, setalertDialogState] = useState({isOpen:false,text:""});
 
-  const groupInfo = useSessionSelector(
-    (state) => state.sessions[0]?.userData.groupInfo ?? {}
-  ) as Record<string, group>;
+  console.log("GroupWindow mount");
+  console.log("sesh group index")
+  console.log(selectedIndex)
+  if (selectedIndex < 0 || selectedIndex >= sessions.length ) return <div>No profile selected.</div> //TODO: style here
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  // const tabs = useSessionSelector(
+  //   (state) => state.sessions[selectedIndex]?.userData.tabGroups ?? {}
+  // );
+  const tabs = sessions[selectedIndex].userData.tabGroups ?? {} as session
+  
+  // const groupInfo = useSessionSelector(
+  //   (state) => state.sessions[selectedIndex]?.userData.groupInfo ?? {}
+  // ) as Record<string, group>;
+  const groupInfo = sessions[selectedIndex].userData.groupInfo ?? {} as Record<string, group>;
+  console.log(tabs)
+  console.log(groupInfo)
   const open = Boolean(anchorEl);
   
-  const [selectedGroupId, setSelectedGroupId] = useState(-2)
-
+  
   const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>, id:string) => {
-    setSelectedGroupId(parseInt(id))
+    setSelectedGroupId(id)
     setAnchorEl(event.currentTarget);
   };
 
-  const [alertDialogState, setalertDialogState] = useState({isOpen:false,text:""});
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -103,12 +115,11 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
     //first get the state from the DB
     let sessions_db = await chrome.storage.local.get("sessions");
 
-    //[0] here will become session_index on next stage
-    if (sessions_db.sessions[0] != undefined) {
-      let currentSession = sessions_db.sessions[0]
+    if (selectedIndex >= 0 && sessions_db.sessions[selectedIndex] != undefined) {
+      let currentSession = sessions_db.sessions[selectedIndex]
       
       //We can then get all the tab Ids from tabGroups from the tabs
-      let groupTabsRemove = Object.entries(tabs).find(([id, _]) => id === selectedGroupId.toString())?.[1]
+      let groupTabsRemove = Object.entries(tabs).find(([id, _]) => id === selectedGroupId)?.[1]
       console.log(groupTabsRemove) 
       let tabIds = groupTabsRemove?.map((t: tab) => t.id)
       console.log(tabIds) 
@@ -125,21 +136,21 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
       }
 
       // Then we want to filter out the tabGroups such that it does not have that group anymore
-      let newGroupInfo = Object.fromEntries(Object.entries(tabs).filter(([id, _]) => id != selectedGroupId.toString()))
+      let newGroupInfo = Object.fromEntries(Object.entries(tabs).filter(([id, _]) => id != selectedGroupId))
       console.log("Removed the group and its tabs from tabGroups:")
       console.log(newGroupInfo)
       currentSession.userData.tabGroups = newGroupInfo
       //And if the group is not -1 we want to filter out groupInfo so that it does not have any info on that group
-      if (selectedGroupId != -1){
+      if (selectedGroupId != '-1'){
         console.log("Trying to delete it from the cosmetic group")
         console.log(groupInfo)
-        console.log(groupInfo[selectedGroupId.toString()])
+        console.log(groupInfo[selectedGroupId])
         const modifiedGroupInfo = {... groupInfo} //copy first to mutate
-        delete modifiedGroupInfo[selectedGroupId.toString()]
+        delete modifiedGroupInfo[selectedGroupId]
         currentSession.userData.groupInfo = modifiedGroupInfo
       }
       //Set state for the selectedGroupId to be something else
-      setSelectedGroupId(-2)
+      setSelectedGroupId('-2')
       //Attempt to save the new modified state to the db
       console.log("New db before saving!");
       console.log(currentSession)
@@ -173,7 +184,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
 
   const openGroupDeletionDialog = () => {
     //set state for the dialog
-    let groupName = groupInfo[selectedGroupId.toString()]?.title ?? "Ungrouped"
+    let groupName = groupInfo[selectedGroupId]?.title ?? "Ungrouped"
     setalertDialogState({isOpen:true, text:`Remove ${groupName} from your current saved groups for this session?\n`})
     handleClose();
   }

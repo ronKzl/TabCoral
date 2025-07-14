@@ -3,7 +3,6 @@ import "./App.css";
 import { useDispatch } from "react-redux";
 import { setSessions } from "./sessionSlice";
 import Box from "@mui/material/Box";
-// import WorkflowSlider from './components/WorkflowSlider';
 import TabWindow from "./components/TabWindow";
 import GroupWindow from "./components/GroupWindow";
 import Switch from "@mui/material/Switch";
@@ -23,7 +22,7 @@ export interface PopUpState {
 function App() {
   const label = { inputProps: { "aria-label": "switch between group and tab view" } };
   const [isChecked, setIsChecked] = useState(false);
-
+  
   const [popUp, setPopUpOpen] = useState<PopUpState>({
     open: false,
     duration: 0,

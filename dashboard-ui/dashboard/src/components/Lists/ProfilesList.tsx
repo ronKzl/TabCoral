@@ -16,6 +16,7 @@ import { useSessionSelector } from "../../hooks";
 import {type session} from "../../interfaces/session"
 import ProfileListItem from "./ProfileListItem"
 
+
 export default function ProfilesList() {
   // const [open, setOpen] = React.useState(true);
   const sessions = useSessionSelector((state) => (
@@ -38,7 +39,7 @@ export default function ProfilesList() {
       }
     >
         {/* Create all the listItemButtons */}
-        {sessions.map((entry: session, index: number) => (<ProfileListItem session_id={entry.id} session_index={index}/>))}
+        {sessions.map((entry: session, index: number) => (<ProfileListItem session_id={entry.id} session_index={index} />))}
       
       {/* THIS FOR LATER WHEN DISPLAYING MORE INFO ON WHAT IS IN A PROFILE */}
       {/* <ListItemButton onClick={handleClick}>

@@ -9,6 +9,7 @@ import CardMedia from "@mui/material/CardMedia";
 import { type tab } from "../interfaces/session";
 import AlertDialog from "./Actions/AlertBox";
 import {type PopUpState} from "../App"
+import { useAppSelector } from '../hooks';
 
 interface TabCardProps {
   favicon: string;
@@ -21,6 +22,8 @@ interface TabCardProps {
 
 function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps) {
   
+  const selectedIndex = useAppSelector((state) => state.profile.selectedIndex)
+
   const handleTabOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     chrome.tabs.create({ active: true, index: index, url: url });
     event.stopPropagation();
@@ -54,11 +57,10 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
     // }
     //remove from database orderedEntries - query for it
     let sessions_db = await chrome.storage.local.get("sessions");
-    //at 0 will be session_index - add here when sessions will be added
   
-    if (sessions_db.sessions[0] != undefined) {
+    if (selectedIndex >= 0 && sessions_db.sessions[selectedIndex] != undefined) {
       //find what group the tab belongs to and then filter it out of the array
-      let orderedEntries = sessions_db.sessions[0].userData.orderedEntries;
+      let orderedEntries = sessions_db.sessions[selectedIndex].userData.orderedEntries;
       let gId = orderedEntries.find((tab: tab) => tab.id === id)?.groupId;
       
       let newOrder = orderedEntries.filter((tab: tab) => tab.id != id);
@@ -66,17 +68,17 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
       //now remove the tab from its associated group
       if (
         gId != undefined &&
-        gId in sessions_db.sessions[0].userData.tabGroups
+        gId in sessions_db.sessions[selectedIndex].userData.tabGroups
       ) {
-        let newGroup = sessions_db.sessions[0].userData.tabGroups[gId].filter(
+        let newGroup = sessions_db.sessions[selectedIndex].userData.tabGroups[gId].filter(
           (tab: tab) => tab.id != id
         );
         //set the modified arrays as new memebers
-        sessions_db.sessions[0].userData.orderedEntries = newOrder;
-        sessions_db.sessions[0].userData.tabGroups[gId] = newGroup;
+        sessions_db.sessions[selectedIndex].userData.orderedEntries = newOrder;
+        sessions_db.sessions[selectedIndex].userData.tabGroups[gId] = newGroup;
 
         console.log("New db before saving!");
-        console.log(sessions_db.sessions[0]);
+        console.log(sessions_db.sessions[selectedIndex]);
 
         console.log("attempting to save");
         //let arr = [sessions_db]
