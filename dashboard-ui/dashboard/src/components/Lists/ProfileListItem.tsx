@@ -17,7 +17,7 @@ export default function ProfileListItem({session_id, session_index}: ProfileList
   
   const dispatch = useDispatch()
   return (
-    <ListItemButton onClick={() => dispatch(setProfileIndex(session_index))}>
+    <ListItemButton sx={{borderColor: "white", border: "solid", borderTop:"none", borderRight: "none", borderLeft: "none"}} onClick={() => dispatch(setProfileIndex(session_index))}>
       <ListItemText primary={session_id} key={session_index} />
     </ListItemButton>
   );

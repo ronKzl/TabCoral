@@ -1,9 +1,8 @@
-//FOR LATER
-//chrome.storage API
-
 //keep track of the id of the dashboard extension tab
 let extensionTab = null;
 
+const MAX_PROFILES = 10;
+let temp_id = 1;
 //on first install,update,closing of chrome
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install" || details.reason === "update") {
@@ -49,18 +48,40 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 chrome.runtime.onMessage.addListener((msg, sender) => {
   if (msg.type === "SAVE_ALL") {
     chrome.storage.local.get("sessions").then((store) => {
-      const all = store.sessions || [];
-      const existingIndex = all.findIndex((w) => w.id === msg.data.id);
+      const allProfiles = store.sessions || [];
+      const existingIndex = allProfiles.findIndex((w) => w.id === msg.data.id);
 
       if (existingIndex !== -1) {
         // Overwrite the existing one
-        all[existingIndex] = msg.data;
+        allProfiles[existingIndex] = msg.data;
       } else {
         // Otherwise, push it as new
-        all.push(msg.data);
+        allProfiles.push(msg.data);
       }
       //all.push({ id: Date.now(), data: msg.data });
-      return chrome.storage.local.set({ sessions: all });
+      return chrome.storage.local.set({ sessions: allProfiles });
+    });
+  }
+});
+
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg.type === "CREATE_NEW_PROFILE") {
+    chrome.storage.local.get("sessions").then((store) => {
+      const allProfiles = store.sessions || [];
+      if (allProfiles.length >= MAX_PROFILES) {
+        return -1;
+      } else {
+        let newProfileData = {
+          id: temp_id,
+          savedAt: new Date().toISOString(),
+          userData: {},
+        };
+        temp_id = temp_id + 1;
+        allProfiles.push(newProfileData);
+        console.log(allProfiles)
+        console.log(temp_id)
+        return chrome.storage.local.set({ sessions: allProfiles });
+      }
     });
   }
 });
