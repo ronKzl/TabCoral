@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import PopUpBar from "./components/Actions/PopUpBar";
 import ProfilesList from "./components/Lists/ProfilesList";
 import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
 export interface PopUpState {
   open: boolean;
   message: string;
@@ -30,6 +31,12 @@ function App() {
     status: "info",
     variant: "outlined",
   });
+
+  async function createNewProfile(){
+    let res = await chrome.runtime.sendMessage({type: "CREATE_NEW_PROFILE"});
+    console.log(res)
+
+  }
 
   const popup_card = (
     <PopUpBar
@@ -72,6 +79,7 @@ function App() {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid size={2}>
+          <Button onClick={() => createNewProfile()} sx={{backgroundColor:"green"}} variant="contained">New Profile</Button>
           <ProfilesList />
         </Grid>
         <Grid size={8}>
