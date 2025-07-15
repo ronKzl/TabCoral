@@ -58,7 +58,6 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
         // Otherwise, push it as new
         allProfiles.push(msg.data);
       }
-      //all.push({ id: Date.now(), data: msg.data });
       return chrome.storage.local.set({ sessions: allProfiles });
     });
   }
@@ -69,19 +68,20 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     chrome.storage.local.get("sessions").then((store) => {
       const allProfiles = store.sessions || [];
       if (allProfiles.length >= MAX_PROFILES) {
-        return -1;
+        sendResponse({ success: false}); //, reason: "max_profiles" } TODO: for later
       } else {
         let newProfileData = {
           id: temp_id,
           savedAt: new Date().toISOString(),
           userData: {},
         };
-        temp_id = temp_id + 1;
+        temp_id += 1;
         allProfiles.push(newProfileData);
-        console.log(allProfiles)
-        console.log(temp_id)
-        return chrome.storage.local.set({ sessions: allProfiles });
+        chrome.storage.local.set({ sessions: allProfiles }).then(() => {
+          sendResponse({success: true})
+        });
       }
     });
   }
+  return true //keep channel open for async use
 });

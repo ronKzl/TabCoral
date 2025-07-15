@@ -32,12 +32,6 @@ function App() {
     variant: "outlined",
   });
 
-  async function createNewProfile(){
-    let res = await chrome.runtime.sendMessage({type: "CREATE_NEW_PROFILE"});
-    console.log(res)
-
-  }
-
   const popup_card = (
     <PopUpBar
       key={popUp.message + popUp.status}
@@ -49,6 +43,31 @@ function App() {
       handleClick={() => setPopUpOpen({ ...popUp, open: false })}
     />
   );
+
+   async function handleCreatingNewProfile(){
+    let res = await chrome.runtime.sendMessage({type: "CREATE_NEW_PROFILE"});
+    console.log(res)
+    if (res.success){
+      setPopUpOpen({
+        open: true,
+        duration: 3000,
+        message: "New Profile Created!",
+        status: "success",
+        variant: "filled",
+      });
+    }
+    else {
+      setPopUpOpen({
+        open: true,
+        duration: 8000,
+        message:
+          "Error: profile limit reached or data error in transit.",
+        status: "error",
+        variant: "filled",
+      });
+    }
+
+  }
 
   const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked);
@@ -79,7 +98,7 @@ function App() {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid size={2}>
-          <Button onClick={() => createNewProfile()} sx={{backgroundColor:"green"}} variant="contained">New Profile</Button>
+          <Button onClick={() => handleCreatingNewProfile()} sx={{backgroundColor:"green"}} variant="contained">New Profile</Button>
           <ProfilesList />
         </Grid>
         <Grid size={8}>
