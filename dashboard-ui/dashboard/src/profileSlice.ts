@@ -5,7 +5,7 @@ interface ProfileState {
 }
 
 const initialState: ProfileState = {
-  selectedIndex: -1, //or 0?
+  selectedIndex: -1, 
 };
 
 const profileSlice = createSlice({

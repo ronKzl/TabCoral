@@ -12,6 +12,7 @@ import PopUpBar from "./components/Actions/PopUpBar";
 import ProfilesList from "./components/Lists/ProfilesList";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
+import { setProfileIndex } from "./profileSlice";
 export interface PopUpState {
   open: boolean;
   message: string;
@@ -91,6 +92,17 @@ function App() {
         });
       }
     });
+
+    chrome.storage.local.get("currentSessionIndex").then((res) => {
+      const index = res.currentSessionIndex
+      if (typeof index === "number" && index >= 0){
+        dispatch(setProfileIndex(index))
+      }
+      else{
+        dispatch(setProfileIndex(-1))
+      }
+    });
+
   }, []);
 
 

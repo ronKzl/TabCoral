@@ -4,6 +4,7 @@ import { setProfileIndex } from "../../profileSlice";
 import { useDispatch } from "react-redux";
 import ListItem from "@mui/material/ListItem";
 import Button from "@mui/material/Button";
+import { useAppSelector } from "../../hooks";
 // import { useState } from "react";
 // import Collapse from "@mui/material/Collapse";
 // import ExpandLess from "@mui/icons-material/ExpandLess";
@@ -20,6 +21,7 @@ export default function ProfileListItem({
   session_index,
 }: ProfileListItemProps) {
   const dispatch = useDispatch();
+  const selectedIndex = useAppSelector((state) => state.profile.selectedIndex)
   return (
     <ListItem
       key={session_index}
@@ -27,6 +29,7 @@ export default function ProfileListItem({
       secondaryAction={<><Button sx={{color:"silver"}} variant="text">Restore</Button> <Button sx={{color:"red"}} variant="text">Delete</Button></>}
     >
       <ListItemButton
+        selected={session_index === selectedIndex}
         sx={{
           borderColor: "white",
           border: "solid",
