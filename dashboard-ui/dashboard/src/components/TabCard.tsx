@@ -142,7 +142,7 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
             handleClickOpen(), e.stopPropagation();
           }}
         >
-          Remove From Session
+          Remove From Profile
         </Button>
       </CardActions>
     </React.Fragment>

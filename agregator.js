@@ -27,7 +27,11 @@ const btn = document.createElement("button");
 btn.textContent = "Save All";
 btn.onclick = () => {
   console.log("Comm with the service worker to save all....");
-  const safeData = {
+  
+  chrome.storage.local.get("currentSessionIndex").then(({ currentSessionIndex }) => {
+    console.log("Selected session is", currentSessionIndex);
+
+    const safeData = {
     tabGroups: Object.fromEntries(tabGroups),
     groupInfo: Object.fromEntries(groupInfo),
     orderedEntries: orderedEntries,
@@ -35,11 +39,14 @@ btn.onclick = () => {
   chrome.runtime.sendMessage({
     type: "SAVE_ALL",
     data: {
-      id: "current",
+      id: currentSessionIndex,
       savedAt: new Date().toISOString(),
       userData: safeData,
     },
   });
+
+  });
+
 };
 btn.style.cursor = "pointer";
 header.append(btn);

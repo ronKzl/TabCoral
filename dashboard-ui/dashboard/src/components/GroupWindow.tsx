@@ -154,9 +154,10 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
       //Attempt to save the new modified state to the db
       console.log("New db before saving!");
       console.log(currentSession)
-      console.log("attempting to save");
-                                                          //when session implemented will ovverid cur_session id
-      let res = await chrome.storage.local.set({ sessions: [currentSession]  });
+      console.log("All updated sessions before saving!");
+      sessions_db.sessions[selectedIndex] = currentSession
+      console.log("attempting to save");                                                 
+      let res = await chrome.storage.local.set({ sessions: sessions_db.sessions  });
       console.log(res);
       success = true
     }
@@ -220,7 +221,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
                 }}
               >
                 <MenuItem onClick={(e) => {handleGroupOpen(), e.stopPropagation();}}> <FolderOpenIcon /> Open Group</MenuItem>
-                <MenuItem key={id} onClick={(e) => {openGroupDeletionDialog(), e.stopPropagation();}}> <DeleteIcon /> Remove From Session </MenuItem>
+                <MenuItem key={id} onClick={(e) => {openGroupDeletionDialog(), e.stopPropagation();}}> <DeleteIcon /> Remove From Profile </MenuItem>
               </Menu>
             </Box>
           </AccordionSummary>

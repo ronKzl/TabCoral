@@ -34,7 +34,7 @@ export default function ProfileListItem({
           borderRight: "none",
           borderLeft: "none",
         }}
-        onClick={() => dispatch(setProfileIndex(session_index))}
+        onClick={() => {chrome.storage.local.set({ currentSessionIndex: session_index }); dispatch(setProfileIndex(session_index)) }}
       >
         <ListItemText primary={session_id} key={session_index} />
       </ListItemButton>
