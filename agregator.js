@@ -28,9 +28,12 @@ btn.textContent = "Save All";
 btn.onclick = () => {
   console.log("Comm with the service worker to save all....");
   
-  chrome.storage.local.get("currentSessionIndex").then(({ currentSessionIndex }) => {
-    console.log("Selected session is", currentSessionIndex);
-
+  chrome.storage.local.get("currentSessionId").then(({ currentSessionId }) => {
+    console.log("Selected session id is", currentSessionId);
+    if (currentSessionId === undefined || currentSessionId < 0){
+      return; //todo: Some kind of msg 
+    }
+    
     const safeData = {
     tabGroups: Object.fromEntries(tabGroups),
     groupInfo: Object.fromEntries(groupInfo),
@@ -39,7 +42,7 @@ btn.onclick = () => {
   chrome.runtime.sendMessage({
     type: "SAVE_ALL",
     data: {
-      id: currentSessionIndex,
+      id: currentSessionId,
       savedAt: new Date().toISOString(),
       userData: safeData,
     },

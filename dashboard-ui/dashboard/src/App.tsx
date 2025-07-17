@@ -111,7 +111,7 @@ function App() {
       <Grid container spacing={2}>
         <Grid size={2}>
           <Button onClick={() => handleCreatingNewProfile()} sx={{backgroundColor:"green"}} variant="contained">New Profile</Button>
-          <ProfilesList />
+          <ProfilesList setPopUpOpen={setPopUpOpen}/>
         </Grid>
         <Grid size={8}>
           <Box component="section" sx={{ p: 2 }}>

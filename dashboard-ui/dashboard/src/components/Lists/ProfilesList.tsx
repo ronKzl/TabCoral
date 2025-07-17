@@ -12,10 +12,14 @@ import List from '@mui/material/List';
 import { useSessionSelector } from "../../hooks";
 import {type session} from "../../interfaces/session"
 import ProfileListItem from "./ProfileListItem"
+import { type PopUpState } from "../../App";
 // import { ListItemIcon } from '@mui/material';
 
+interface ProfileListProps {
+  setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
+}
 
-export default function ProfilesList() {
+export default function ProfilesList({setPopUpOpen}:ProfileListProps) {
   // const [open, setOpen] = React.useState(true);
   const sessions = useSessionSelector((state) => (
     state.sessions ?? []
@@ -37,7 +41,7 @@ export default function ProfilesList() {
       }
     >
         {/* Create all the listItemButtons */}
-        {sessions.map((entry: session, index: number) => (<ProfileListItem session_id={entry.id} session_index={index} />))}
+        {sessions.map((entry: session, index: number) => (<ProfileListItem session_id={entry.id} session_index={index} setPopUpOpen={setPopUpOpen} />))}
         
       {/* THIS FOR LATER WHEN DISPLAYING MORE INFO ON WHAT IS IN A PROFILE */}
       {/* <ListItemButton onClick={handleClick}>

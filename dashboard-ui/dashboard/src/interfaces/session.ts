@@ -9,12 +9,21 @@ export interface tab {
 
 export interface group {
   collapsed: boolean;
-  color: "grey" | "blue" | "cyan" | "green" | "orange" | "pink" | "purple" | "red" | "yellow";
+  color:
+    | "grey"
+    | "blue"
+    | "cyan"
+    | "green"
+    | "orange"
+    | "pink"
+    | "purple"
+    | "red"
+    | "yellow";
   title: string;
 }
 
 export interface session {
-  id: string;
+  id: number;
   savedAt: string;
   userData: {
     groupInfo: Record<string, group>;

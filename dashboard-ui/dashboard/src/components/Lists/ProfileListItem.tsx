@@ -5,28 +5,118 @@ import { useDispatch } from "react-redux";
 import ListItem from "@mui/material/ListItem";
 import Button from "@mui/material/Button";
 import { useAppSelector } from "../../hooks";
+import { useState } from "react";
+import AlertDialog from "../Actions/AlertBox";
+import { type PopUpState } from "../../App";
+import { type session } from "../../interfaces/session";
 // import { useState } from "react";
 // import Collapse from "@mui/material/Collapse";
 // import ExpandLess from "@mui/icons-material/ExpandLess";
 // import ExpandMore from "@mui/icons-material/ExpandMore";
 
 interface ProfileListItemProps {
-  session_id: string;
+  session_id: number;
   session_index: number;
+  setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
 
 //TODO -> Expand component later based on other things that will be needed.
 export default function ProfileListItem({
   session_id,
   session_index,
+  setPopUpOpen,
 }: ProfileListItemProps) {
   const dispatch = useDispatch();
-  const selectedIndex = useAppSelector((state) => state.profile.selectedIndex)
+  const selectedIndex = useAppSelector((state) => state.profile.selectedIndex);
+  const [alertDialogState, setalertDialogState] = useState({
+    isOpen: false,
+    text: "",
+  });
+
+  async function handleDeletingProfile(profileId: number, profileIndex: number) {
+    //show the pop up as pre-req
+    console.log(profileIndex)
+    console.log(`deleting profile index: ${profileId}`);
+    setalertDialogState({ isOpen: false, text: "" });
+    let success = false;
+    //get all the sessions from the chrome store
+    let sessions_db = await chrome.storage.local.get("sessions");
+    console.log(`what i got is:`);
+    console.log(sessions_db.sessions);
+    //filter out all but the current ussing the sessionIndex which is the id so cant be changed
+    let updated_sessions_db = sessions_db.sessions.filter(
+      (session: session) => !(session.id === profileId)
+    );
+    console.log(`Now I updated array is:`);
+    console.log(updated_sessions_db);
+    sessions_db.sessions = updated_sessions_db;
+    
+    //save back
+    let res = await chrome.storage.local.set({
+      sessions: sessions_db.sessions,
+    });
+    console.log(res);
+   
+    chrome.storage.local.set({ currentSessionIndex: -1 });
+    chrome.storage.local.set({ currentSessionId: -1 })
+    dispatch(setProfileIndex(-1));
+    
+    success = true;
+    //show the success snackbar
+    if (success) {
+      setPopUpOpen({
+        open: true,
+        duration: 5000,
+        message: "Profile was succesfully removed from storage.",
+        status: "success",
+        variant: "filled",
+      });
+    } else {
+      setPopUpOpen({
+        open: true,
+        duration: 8000,
+        message:
+          "Error: Current profile was not found in local storage, attempt to reload the page and try again.",
+        status: "error",
+        variant: "filled",
+      });
+    }
+  }
+
+  const handleAlertBoxClose = () => {
+    setalertDialogState({ isOpen: false, text: "" });
+    setPopUpOpen({
+      open: true,
+      duration: 3000,
+      message: "Profile Remove Operation Cancelled.",
+      status: "warning",
+      variant: "standard",
+    });
+  };
+
   return (
     <ListItem
       key={session_index}
       disablePadding
-      secondaryAction={<><Button sx={{color:"silver"}} variant="text">Restore</Button> <Button sx={{color:"red"}} variant="text">Delete</Button></>}
+      secondaryAction={
+        <>
+          <Button sx={{ color: "silver" }} variant="text">
+            Restore
+          </Button>{" "}
+          <Button
+            onClick={() =>
+              setalertDialogState({
+                isOpen: true,
+                text: `Deleting profile ${session_id}, curr index in array ${session_index}`,
+              })
+            }
+            sx={{ color: "red" }}
+            variant="text"
+          >
+            Delete
+          </Button>
+        </>
+      }
     >
       <ListItemButton
         selected={session_index === selectedIndex}
@@ -37,10 +127,23 @@ export default function ProfileListItem({
           borderRight: "none",
           borderLeft: "none",
         }}
-        onClick={() => {chrome.storage.local.set({ currentSessionIndex: session_index }); dispatch(setProfileIndex(session_index)) }}
+        onClick={() => {
+          chrome.storage.local.set({ currentSessionIndex: session_index });
+          chrome.storage.local.set({ currentSessionId: session_id })
+          dispatch(setProfileIndex(session_index));
+        }}
       >
         <ListItemText primary={session_id} key={session_index} />
       </ListItemButton>
+      <AlertDialog
+        open={alertDialogState.isOpen}
+        close={() => handleAlertBoxClose()}
+        title={alertDialogState.text}
+        content={`This operation will remove the profile ${session_id} and ALL of its associated saved groups and tabs, are you sure you want to proceed?`}
+        onAgreeClick={() => {
+          handleDeletingProfile(session_id,session_index);
+        }}
+      />
     </ListItem>
   );
 }
