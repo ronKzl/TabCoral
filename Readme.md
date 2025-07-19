@@ -29,7 +29,7 @@ A user-behavior driven checklist to guide development.
 - [x] User is able to delete profiles
 - [x] User is able to switch between working profiles 
 - [ ] User is able to restore profiles to browser <--- WIP
-- [ ] User is able to rename profile
+- [ ] User is able to rename a profile
 - [ ] App themes (black, white, etc.) & general styling
 
 ## Post MVP
