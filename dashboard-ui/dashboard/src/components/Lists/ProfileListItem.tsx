@@ -9,18 +9,15 @@ import { useState } from "react";
 import AlertDialog from "../Actions/AlertBox";
 import { type PopUpState } from "../../App";
 import { type session } from "../../interfaces/session";
-// import { useState } from "react";
-// import Collapse from "@mui/material/Collapse";
-// import ExpandLess from "@mui/icons-material/ExpandLess";
-// import ExpandMore from "@mui/icons-material/ExpandMore";
+
 
 interface ProfileListItemProps {
-  session_id: number;
+  session_id: string;
   session_index: number;
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
 
-//TODO -> Expand component later based on other things that will be needed.
+
 export default function ProfileListItem({
   session_id,
   session_index,
@@ -33,7 +30,7 @@ export default function ProfileListItem({
     text: "",
   });
 
-  async function handleDeletingProfile(profileId: number, profileIndex: number) {
+  async function handleDeletingProfile(profileId: string, profileIndex: number) {
     //show the pop up as pre-req
     console.log(profileIndex)
     console.log(`deleting profile index: ${profileId}`);
@@ -94,13 +91,54 @@ export default function ProfileListItem({
     });
   };
 
+  async function openCurrentSession(session_index: number){
+    console.log(`Opening session ${session_index}`)
+    //Clear all tabs of current session from the tab bar?
+    //query all tabs and call close
+    await chrome.tabs.query({}, function(tabs) {
+      tabs.forEach((tab) => {
+        if (tab?.id !== undefined){
+          console.log(tab.id)
+          //chrome.tabs.remove(tab.id)
+        }
+        
+      })
+    });
+
+    //need to go for each group in tabGroups
+    //we open its tabs
+    //get current from DB by selected index
+    //let profiles = await chrome.storage.local.get("sessions");
+
+    //let profile = profiles[session_index]
+    //style the group based on info in gorupInfo
+
+    //move on to the next group
+    
+    // let groupTabIds = await Promise.all(tabs[selectedGroupId].map(async (tab) => {
+    //   console.log(tab.id)
+    //   let newTab = await chrome.tabs.create({active: false, index: tab.index, url: tab.url})
+    //   return newTab.id}))
+    
+    // //filter on to get out undefined ids
+    // let cleanIds: number[] = groupTabIds.filter((id) => {
+    //   return id !== undefined
+    // })
+    // let newGroupId = await chrome.tabs.group({tabIds: cleanIds}) 
+    // //now that group is avaiable can style it
+    // chrome.tabGroups.update(newGroupId, {collapsed: groupInfo[selectedGroupId].collapsed,
+    //   color: groupInfo[selectedGroupId].color,
+    //   title: groupInfo[selectedGroupId].title
+    // });
+  }
+
   return (
     <ListItem
       key={session_index}
       disablePadding
       secondaryAction={
         <>
-          <Button sx={{ color: "silver" }} variant="text">
+          <Button onClick={() => openCurrentSession(session_index)} sx={{ color: "silver" }} variant="text">
             Restore
           </Button>{" "}
           <Button

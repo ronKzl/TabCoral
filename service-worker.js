@@ -2,7 +2,7 @@
 let extensionTab = null;
 
 const MAX_PROFILES = 10;
-// let temp_id = 0;
+
 //on first install,update,closing of chrome
 chrome.runtime.onInstalled.addListener((details) => {
   if (details.reason === "install" || details.reason === "update") {
@@ -54,10 +54,6 @@ chrome.runtime.onMessage.addListener((msg, sender) => {
       if (existingIndex !== -1) {
         // Overwrite the existing one
         allProfiles[existingIndex] = msg.data;
-      } else {
-        // Otherwise, push it as new | TODO: Maybe remove let user interact more fludily through dashboard - side panel only used to update profiles that were made!
-        allProfiles.push(msg.data);
-        //temp_id += 1 //update profile amount
       }
       return chrome.storage.local.set({ sessions: allProfiles });
     });

@@ -23,7 +23,7 @@ export interface group {
 }
 
 export interface session {
-  id: number;
+  id: string;
   savedAt: string;
   userData: {
     groupInfo: Record<string, group>;
