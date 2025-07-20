@@ -10,13 +10,11 @@ import AlertDialog from "../Actions/AlertBox";
 import { type PopUpState } from "../../App";
 import { type session } from "../../interfaces/session";
 
-
 interface ProfileListItemProps {
   session_id: string;
   session_index: number;
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
-
 
 export default function ProfileListItem({
   session_id,
@@ -30,9 +28,12 @@ export default function ProfileListItem({
     text: "",
   });
 
-  async function handleDeletingProfile(profileId: string, profileIndex: number) {
+  async function handleDeletingProfile(
+    profileId: string,
+    profileIndex: number
+  ) {
     //show the pop up as pre-req
-    console.log(profileIndex)
+    console.log(profileIndex);
     console.log(`deleting profile index: ${profileId}`);
     setalertDialogState({ isOpen: false, text: "" });
     let success = false;
@@ -47,17 +48,17 @@ export default function ProfileListItem({
     console.log(`Now I updated array is:`);
     console.log(updated_sessions_db);
     sessions_db.sessions = updated_sessions_db;
-    
+
     //save back
     let res = await chrome.storage.local.set({
       sessions: sessions_db.sessions,
     });
     console.log(res);
-   
+
     chrome.storage.local.set({ currentSessionIndex: -1 });
-    chrome.storage.local.set({ currentSessionId: -1 })
+    chrome.storage.local.set({ currentSessionId: -1 });
     dispatch(setProfileIndex(-1));
-    
+
     success = true;
     //show the success snackbar
     if (success) {
@@ -91,45 +92,59 @@ export default function ProfileListItem({
     });
   };
 
-  async function openCurrentSession(session_index: number){
-    console.log(`Opening session ${session_index}`)
-    //Clear all tabs of current session from the tab bar?
-    //query all tabs and call close
-    await chrome.tabs.query({}, function(tabs) {
-      tabs.forEach((tab) => {
-        if (tab?.id !== undefined){
-          console.log(tab.id)
-          //chrome.tabs.remove(tab.id)
-        }
-        
-      })
-    });
+  async function openCurrentSession(session_index: number) {
+    console.log(`Opening session ${session_index}`);
+   
+    //get current profiles from DB by selected index
+    let profiles = (await chrome.storage.local.get("sessions")) as {
+      sessions: session[];
+    };
 
-    //need to go for each group in tabGroups
-    //we open its tabs
-    //get current from DB by selected index
-    //let profiles = await chrome.storage.local.get("sessions");
+    let profile = profiles.sessions[session_index];
+    const { groupInfo, orderedEntries, tabGroups } = profile.userData;
+    console.log(orderedEntries);
 
-    //let profile = profiles[session_index]
-    //style the group based on info in gorupInfo
+    if (Object.keys(tabGroups ?? {}).length > 0) {
+       //Clear all tabs of current session from the tab bar?
+      //query all tabs and call close
+      // await chrome.tabs.query({}, function(tabs) {
+      //   tabs.forEach((tab) => {
+      //     if (tab?.id !== undefined){
+      //       console.log(tab.id)
+      //       //chrome.tabs.remove(tab.id) UNCOMENT WHEN ALL WORK ON EXTENSION IS DONE
+      //     }
 
-    //move on to the next group
-    
-    // let groupTabIds = await Promise.all(tabs[selectedGroupId].map(async (tab) => {
-    //   console.log(tab.id)
-    //   let newTab = await chrome.tabs.create({active: false, index: tab.index, url: tab.url})
-    //   return newTab.id}))
-    
-    // //filter on to get out undefined ids
-    // let cleanIds: number[] = groupTabIds.filter((id) => {
-    //   return id !== undefined
-    // })
-    // let newGroupId = await chrome.tabs.group({tabIds: cleanIds}) 
-    // //now that group is avaiable can style it
-    // chrome.tabGroups.update(newGroupId, {collapsed: groupInfo[selectedGroupId].collapsed,
-    //   color: groupInfo[selectedGroupId].color,
-    //   title: groupInfo[selectedGroupId].title
-    // });
+      //   })
+      // });
+      console.log(tabGroups);
+      for (const [groupId, groupTabs] of Object.entries(tabGroups)) {
+        let groupTabIds = await Promise.all(
+          groupTabs.map(async (tab) => {
+            console.log(tab.id);
+
+            let newTab = await chrome.tabs.create({
+              active: false,
+              index: tab.index,
+              url: tab.url,
+            });
+            return newTab.id;
+          })
+        );
+        console.log(groupTabIds);
+        console.log(groupId);
+        //filter on to get out undefined ids
+        let cleanIds: number[] = groupTabIds.filter((id) => {
+          return id !== undefined;
+        });
+        //put the tabs into 1 group
+        let newGroupId = await chrome.tabs.group({tabIds: cleanIds})
+        //now that group is avaiable can style it
+        chrome.tabGroups.update(newGroupId, {collapsed: groupInfo[groupId].collapsed,
+          color: groupInfo[groupId].color,
+          title: groupInfo[groupId].title
+        });
+      }
+    }
   }
 
   return (
@@ -138,7 +153,11 @@ export default function ProfileListItem({
       disablePadding
       secondaryAction={
         <>
-          <Button onClick={() => openCurrentSession(session_index)} sx={{ color: "silver" }} variant="text">
+          <Button
+            onClick={() => openCurrentSession(session_index)}
+            sx={{ color: "silver" }}
+            variant="text"
+          >
             Restore
           </Button>{" "}
           <Button
@@ -167,7 +186,7 @@ export default function ProfileListItem({
         }}
         onClick={() => {
           chrome.storage.local.set({ currentSessionIndex: session_index });
-          chrome.storage.local.set({ currentSessionId: session_id })
+          chrome.storage.local.set({ currentSessionId: session_id });
           dispatch(setProfileIndex(session_index));
         }}
       >
@@ -179,7 +198,7 @@ export default function ProfileListItem({
         title={alertDialogState.text}
         content={`This operation will remove the profile ${session_id} and ALL of its associated saved groups and tabs, are you sure you want to proceed?`}
         onAgreeClick={() => {
-          handleDeletingProfile(session_id,session_index);
+          handleDeletingProfile(session_id, session_index);
         }}
       />
     </ListItem>
