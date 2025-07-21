@@ -75,6 +75,11 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
         );
         //set the modified arrays as new memebers
         sessions_db.sessions[selectedIndex].userData.orderedEntries = newOrder;
+
+        //IF NEW GROUP IS EMPTY WE NEED TO JUST REMOVE IT FROM TABGROUPS CAN FILTER BY gID
+        //AND FILTER IT OUT FROM GROUPINFO
+        console.log("MY EMPTY GROUP?")
+        console.log(newGroup)
         sessions_db.sessions[selectedIndex].userData.tabGroups[gId] = newGroup;
 
         console.log("New db before saving!");

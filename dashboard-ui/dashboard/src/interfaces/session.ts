@@ -24,6 +24,7 @@ export interface group {
 
 export interface session {
   id: string;
+  name: string;
   savedAt: string;
   userData: {
     groupInfo: Record<string, group>;

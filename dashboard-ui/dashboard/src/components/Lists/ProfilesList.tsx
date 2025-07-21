@@ -35,13 +35,13 @@ export default function ProfilesList({setPopUpOpen}:ProfileListProps) {
       component="nav"
       aria-labelledby="nested-list-subheader"
       subheader={
-        <ListSubheader sx={{fontSize: '1rem',bgcolor: 'inherit', color: 'inherit'}} component="div" id="nested-list-subheader">
+        <ListSubheader sx={{fontSize: '1rem', bgcolor: 'inherit', color: 'inherit'}} component="div" id="nested-list-subheader">
           Your Profiles:
         </ListSubheader>
       }
     >
         {/* Create all the listItemButtons */}
-        {sessions.map((entry: session, index: number) => (<ProfileListItem session_id={entry.id} session_index={index} setPopUpOpen={setPopUpOpen} />))}
+        {sessions.map((entry: session, index: number) => (<ProfileListItem session_name={entry.name} session_id={entry.id} session_index={index} setPopUpOpen={setPopUpOpen} />))}
         
       {/* THIS FOR LATER WHEN DISPLAYING MORE INFO ON WHAT IS IN A PROFILE */}
       {/* <ListItemButton onClick={handleClick}>

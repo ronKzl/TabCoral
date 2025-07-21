@@ -29,8 +29,8 @@ A user-behavior driven checklist to guide development.
 - [x] User is able to delete profiles
 - [x] User is able to switch between working profiles 
 - [x] User is able to restore profiles to browser
-- [ ] User is able to rename a profile <--- WIP
-- [ ] QOL updates to profiles and extension usability workflow
+- [x] User is able to rename a profile 
+- [ ] QOL updates to profiles and extension usability workflow & bugfixes <--- WIP
 - [ ] Styling
 
 ## Post MVP

@@ -43,6 +43,7 @@ btn.onclick = () => {
     type: "SAVE_ALL",
     data: {
       id: currentSessionId,
+      name: "",
       savedAt: new Date().toISOString(),
       userData: safeData,
     },

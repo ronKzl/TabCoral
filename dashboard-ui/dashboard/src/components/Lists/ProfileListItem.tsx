@@ -1,5 +1,5 @@
 import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
+// import ListItemText from "@mui/material/ListItemText";
 import { setProfileIndex } from "../../profileSlice";
 import { useDispatch } from "react-redux";
 import ListItem from "@mui/material/ListItem";
@@ -9,16 +9,18 @@ import { useState } from "react";
 import AlertDialog from "../Actions/AlertBox";
 import { type PopUpState } from "../../App";
 import { type session } from "../../interfaces/session";
-
+import { TextField } from "@mui/material";
 interface ProfileListItemProps {
   session_id: string;
   session_index: number;
+  session_name: string;
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
 
 export default function ProfileListItem({
   session_id,
   session_index,
+  session_name,
   setPopUpOpen,
 }: ProfileListItemProps) {
   const dispatch = useDispatch();
@@ -27,6 +29,13 @@ export default function ProfileListItem({
     isOpen: false,
     text: "",
   });
+  console.log("Profile name that I got")
+  console.log(session_name)
+
+  const [inputValue, setValue] = useState(session_name);
+  const [isEditing, setIsEditing] = useState(false);
+  console.log("Profile name that is being updated")
+  console.log(inputValue)
 
   async function handleDeletingProfile(
     profileId: string,
@@ -94,7 +103,7 @@ export default function ProfileListItem({
 
   async function openCurrentSession(session_index: number) {
     console.log(`Opening session ${session_index}`);
-   
+
     //get current profiles from DB by selected index
     let profiles = (await chrome.storage.local.get("sessions")) as {
       sessions: session[];
@@ -105,7 +114,7 @@ export default function ProfileListItem({
     console.log(orderedEntries);
 
     if (Object.keys(tabGroups ?? {}).length > 0) {
-       //Clear all tabs of current session from the tab bar?
+      //Clear all tabs of current session from the tab bar?
       //query all tabs and call close
       // await chrome.tabs.query({}, function(tabs) {
       //   tabs.forEach((tab) => {
@@ -137,14 +146,24 @@ export default function ProfileListItem({
           return id !== undefined;
         });
         //put the tabs into 1 group
-        let newGroupId = await chrome.tabs.group({tabIds: cleanIds})
+        let newGroupId = await chrome.tabs.group({ tabIds: cleanIds });
         //now that group is avaiable can style it
-        chrome.tabGroups.update(newGroupId, {collapsed: groupInfo[groupId].collapsed,
+        chrome.tabGroups.update(newGroupId, {
+          collapsed: groupInfo[groupId].collapsed,
           color: groupInfo[groupId].color,
-          title: groupInfo[groupId].title
+          title: groupInfo[groupId].title,
         });
       }
     }
+  }
+
+  async function handleProfileNameUpdate() {
+    setIsEditing(false);
+    let profiles = await chrome.storage.local.get("sessions");
+    console.log("handling updating name:")
+    console.log(profiles)
+    profiles.sessions[session_index].name = inputValue;
+    await chrome.storage.local.set({ sessions: profiles.sessions });
   }
 
   return (
@@ -164,7 +183,7 @@ export default function ProfileListItem({
             onClick={() =>
               setalertDialogState({
                 isOpen: true,
-                text: `Deleting profile ${session_id}, curr index in array ${session_index}`,
+                text: `Deleting profile ${session_name}`,
               })
             }
             sx={{ color: "red" }}
@@ -190,13 +209,44 @@ export default function ProfileListItem({
           dispatch(setProfileIndex(session_index));
         }}
       >
-        <ListItemText primary={session_id} key={session_index} />
+        {/* <ListItemText primary={session_id} key={session_index} /> */}
+        <TextField
+          value={inputValue}
+          variant="standard"
+          label={
+            (isEditing && "Editing Profile...") ||
+            (!isEditing && "Edit Profile Name")
+          }
+          slotProps={{
+            input: {
+              readOnly: !isEditing,
+            },
+          }}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={() => handleProfileNameUpdate()}
+          onDoubleClick={(e) => {
+            e.stopPropagation();
+            setIsEditing(true);
+          }}
+          sx={{
+            width: "50%",
+            input: { color: "white" },
+            label: { color: "white" },
+            borderBottom: "1px solid white",
+            "& .MuiInput-underline:after": {
+              borderBottomColor: "white", // bottom border when focused
+            },
+            "& .MuiInputLabel-root.Mui-focused": {
+              color: "white", // Label color when focused
+            },
+          }}
+        />
       </ListItemButton>
       <AlertDialog
         open={alertDialogState.isOpen}
         close={() => handleAlertBoxClose()}
         title={alertDialogState.text}
-        content={`This operation will remove the profile ${session_id} and ALL of its associated saved groups and tabs, are you sure you want to proceed?`}
+        content={`This operation will remove the profile ${session_name} and ALL of its associated saved groups and tabs, are you sure you want to proceed?`}
         onAgreeClick={() => {
           handleDeletingProfile(session_id, session_index);
         }}
@@ -220,5 +270,5 @@ export default function ProfileListItem({
             <ListItemText primary="Relax" />
           </ListItemButton>
         </List>
-      </Collapse> */
+      </Collapse>  !important */
 }

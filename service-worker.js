@@ -69,6 +69,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       } else {
         let newProfileData = {
           id: crypto.randomUUID(),
+          name: "",
           savedAt: new Date().toISOString(),
           userData: {},
         };
