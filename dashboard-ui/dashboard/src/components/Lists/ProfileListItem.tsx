@@ -17,6 +17,7 @@ interface ProfileListItemProps {
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
 
+const OUT_OF_BOUNDS = -1
 export default function ProfileListItem({
   session_id,
   session_index,
@@ -64,9 +65,9 @@ export default function ProfileListItem({
     });
     console.log(res);
 
-    chrome.storage.local.set({ currentSessionIndex: -1 });
-    chrome.storage.local.set({ currentSessionId: -1 });
-    dispatch(setProfileIndex(-1));
+    chrome.storage.local.set({ currentSessionIndex: OUT_OF_BOUNDS });
+    chrome.storage.local.set({ currentSessionId: OUT_OF_BOUNDS });
+    dispatch(setProfileIndex(OUT_OF_BOUNDS));
 
     success = true;
     //show the success snackbar
@@ -145,14 +146,24 @@ export default function ProfileListItem({
         let cleanIds: number[] = groupTabIds.filter((id) => {
           return id !== undefined;
         });
-        //put the tabs into 1 group
-        let newGroupId = await chrome.tabs.group({ tabIds: cleanIds });
-        //now that group is avaiable can style it
-        chrome.tabGroups.update(newGroupId, {
-          collapsed: groupInfo[groupId].collapsed,
-          color: groupInfo[groupId].color,
-          title: groupInfo[groupId].title,
-        });
+        if (groupId !== OUT_OF_BOUNDS.toString()) {
+          //put the tabs into 1 group
+          let newGroupId = await chrome.tabs.group({ tabIds: cleanIds });
+          //now that group is avaiable can style it
+          chrome.tabGroups.update(newGroupId, {
+            collapsed: groupInfo[groupId].collapsed,
+            color: groupInfo[groupId].color,
+            title: groupInfo[groupId].title,
+          });
+        }
+        // //put the tabs into 1 group
+        // let newGroupId = await chrome.tabs.group({ tabIds: cleanIds });
+        // //now that group is avaiable can style it
+        // chrome.tabGroups.update(newGroupId, {
+        //   collapsed: groupInfo[groupId].collapsed,
+        //   color: groupInfo[groupId].color,
+        //   title: groupInfo[groupId].title,
+        // });
       }
     }
   }
