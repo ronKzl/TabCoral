@@ -18,6 +18,7 @@ interface ProfileListItemProps {
 }
 
 const OUT_OF_BOUNDS = -1
+const EXT_TAB_INDEX = 0
 export default function ProfileListItem({
   session_id,
   session_index,
@@ -117,11 +118,12 @@ export default function ProfileListItem({
     if (Object.keys(tabGroups ?? {}).length > 0) {
       //Clear all tabs of current session from the tab bar?
       //query all tabs and call close
+      //UNCOMENT WHEN ALL WORK ON EXTENSION IS DONE
       // await chrome.tabs.query({}, function(tabs) {
       //   tabs.forEach((tab) => {
-      //     if (tab?.id !== undefined){
+      //     if (tab?.id !== undefined && tab?.index !== EXT_TAB_INDEX){
       //       console.log(tab.id)
-      //       //chrome.tabs.remove(tab.id) UNCOMENT WHEN ALL WORK ON EXTENSION IS DONE
+      //       chrome.tabs.remove(tab.id) //UNCOMENT WHEN ALL WORK ON EXTENSION IS DONE
       //     }
 
       //   })
@@ -156,14 +158,6 @@ export default function ProfileListItem({
             title: groupInfo[groupId].title,
           });
         }
-        // //put the tabs into 1 group
-        // let newGroupId = await chrome.tabs.group({ tabIds: cleanIds });
-        // //now that group is avaiable can style it
-        // chrome.tabGroups.update(newGroupId, {
-        //   collapsed: groupInfo[groupId].collapsed,
-        //   color: groupInfo[groupId].color,
-        //   title: groupInfo[groupId].title,
-        // });
       }
     }
   }
@@ -220,7 +214,6 @@ export default function ProfileListItem({
           dispatch(setProfileIndex(session_index));
         }}
       >
-        {/* <ListItemText primary={session_id} key={session_index} /> */}
         <TextField
           value={inputValue}
           variant="standard"
@@ -264,22 +257,4 @@ export default function ProfileListItem({
       />
     </ListItem>
   );
-}
-
-//FUTURE REFERENCE:
-{
-  /* THIS FOR LATER WHEN DISPLAYING MORE INFO ON WHAT IS IN A PROFILE */
-}
-{
-  /* <ListItemButton onClick={handleClick}>
-        <ListItemText primary="Study" />
-        {open ? <ExpandLess /> : <ExpandMore />}
-      </ListItemButton>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemText primary="Relax" />
-          </ListItemButton>
-        </List>
-      </Collapse>  !important */
 }
