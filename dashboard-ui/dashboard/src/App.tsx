@@ -23,7 +23,7 @@ export interface PopUpState {
 
 function App() {
   const label = { inputProps: { "aria-label": "switch between group and tab view" } };
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(true);
   
   const [popUp, setPopUpOpen] = useState<PopUpState>({
     open: false,
@@ -123,7 +123,7 @@ function App() {
         <Grid size={2}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Typography>Tab View</Typography>
-            <Switch {...label} color="default" onChange={handleViewChange} />
+            <Switch {...label} checked={isChecked} color="default" onChange={handleViewChange} />
             <Typography>Group View</Typography>
           </Stack>
         </Grid>

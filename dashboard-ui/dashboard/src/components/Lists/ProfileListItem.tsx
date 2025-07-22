@@ -18,7 +18,7 @@ interface ProfileListItemProps {
 }
 
 const OUT_OF_BOUNDS = -1
-const EXT_TAB_INDEX = 0
+//const EXT_TAB_INDEX = 0
 export default function ProfileListItem({
   session_id,
   session_index,
