@@ -33,6 +33,7 @@ btn.onclick = () => {
     if (currentSessionId === undefined || currentSessionId < 0){
       return; //todo: Some kind of msg 
     }
+  
     
     const safeData = {
     tabGroups: Object.fromEntries(tabGroups),
@@ -93,7 +94,7 @@ chrome.tabs.query({ currentWindow: true }, (tabs) => {
 
 //create the groupMap with groupInfo
 function formGroupInfo() {
-  // Create an array to store "wait until done" objects (Promises)
+  // Create an array to store "wait until done" objects 
   const promises = [];
   //value, key
 
