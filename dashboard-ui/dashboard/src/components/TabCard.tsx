@@ -79,8 +79,25 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
         //IF NEW GROUP IS EMPTY WE NEED TO JUST REMOVE IT FROM TABGROUPS CAN FILTER BY gID
         //AND FILTER IT OUT FROM GROUPINFO
         console.log("MY EMPTY GROUP?")
-        console.log(newGroup)
-        sessions_db.sessions[selectedIndex].userData.tabGroups[gId] = newGroup;
+        if (newGroup.length === 0){
+          // Then we want to filter out the tabGroups such that it does not have that group anymore
+          let newGroupInfo = Object.fromEntries(Object.entries(sessions_db.sessions[selectedIndex].userData.tabGroups).filter(([id, _]) => id != gId))
+          console.log("Removed the group and its tabs from tabGroups:")
+          console.log(newGroupInfo)
+          sessions_db.sessions[selectedIndex].userData.tabGroups = newGroupInfo
+          //And if the group is not -1 we want to filter out groupInfo so that it does not have any info on that group
+          if (gId != '-1'){
+            console.log("Trying to delete it from the cosmetic group")
+            console.log(sessions_db.sessions[selectedIndex].userData.groupInfo)
+            console.log(sessions_db.sessions[selectedIndex].userData.groupInfo[gId])
+            const modifiedGroupInfo = {... sessions_db.sessions[selectedIndex].userData.groupInfo} //copy first to mutate
+            delete modifiedGroupInfo[gId]
+            sessions_db.sessions[selectedIndex].userData.groupInfo = modifiedGroupInfo
+          }
+        }
+        else{
+          sessions_db.sessions[selectedIndex].userData.tabGroups[gId] = newGroup;
+        }
 
         console.log("New db before saving!");
         console.log(sessions_db.sessions[selectedIndex]);
