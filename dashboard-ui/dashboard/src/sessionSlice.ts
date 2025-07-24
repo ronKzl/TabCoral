@@ -5,7 +5,7 @@ const sessionSlice = createSlice({
   initialState: [],
   reducers: {
     setSessions: (_, action) => {
-      return action.payload; // replace old state with new state
+      return action.payload; 
     },
   },
 });

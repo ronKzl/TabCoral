@@ -8,26 +8,20 @@ import Typography from "@mui/material/Typography";
 import CardMedia from "@mui/material/CardMedia";
 import { type tab } from "../interfaces/session";
 import AlertDialog from "./Actions/AlertBox";
-import {type PopUpState} from "../App"
-import { useAppSelector } from '../hooks';
+import { type PopUpState } from "../App";
+import { useAppSelector } from "../hooks";
 
 interface TabCardProps {
   favicon: string;
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
-  index: number;
   title: string;
   url: string;
   id: number;
 }
-
-function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps) {
-  
-  const selectedIndex = useAppSelector((state) => state.profile.selectedIndex)
-
-  const handleTabOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
-    chrome.tabs.create({ active: true, index: index, url: url });
-    event.stopPropagation();
-  };
+const OUT_OF_BOUNDS = "-1";
+const EMPTY = 0;
+function TabCard({ favicon, url, title, id, setPopUpOpen }: TabCardProps) {
+  const selectedIndex = useAppSelector((state) => state.profile.selectedIndex);
 
   const [isDialogOpen, setOpen] = React.useState(false);
 
@@ -37,7 +31,7 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
 
   const handleClose = () => {
     setOpen(false);
-    //show abort snackbar
+
     setPopUpOpen({
       open: true,
       duration: 3000,
@@ -47,61 +41,55 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
     });
   };
 
-  
   async function handleTabRemoval() {
     let success: boolean = false;
-    //TODO: Think architectually if it makes sense to close the tab if its currently open
-    // let result = await chrome.tabs.get(id);
-    // if (result !== undefined) {
-    //   //chrome.tabs.remove(id); 
-    // }
-    //remove from database orderedEntries - query for it
+
     let sessions_db = await chrome.storage.local.get("sessions");
-  
-    if (selectedIndex >= 0 && sessions_db.sessions[selectedIndex] != undefined) {
-      //find what group the tab belongs to and then filter it out of the array
-      let orderedEntries = sessions_db.sessions[selectedIndex].userData.orderedEntries;
+
+    if (
+      selectedIndex >= EMPTY &&
+      sessions_db.sessions[selectedIndex] != undefined
+    ) {
+      let orderedEntries =
+        sessions_db.sessions[selectedIndex].userData.orderedEntries;
       let gId = orderedEntries.find((tab: tab) => tab.id === id)?.groupId;
-      
+
       let newOrder = orderedEntries.filter((tab: tab) => tab.id != id);
-    
-      //now remove the tab from its associated group
+
       if (
         gId != undefined &&
         gId in sessions_db.sessions[selectedIndex].userData.tabGroups
       ) {
-        let newGroup = sessions_db.sessions[selectedIndex].userData.tabGroups[gId].filter(
-          (tab: tab) => tab.id != id
-        );
-        //set the modified arrays as new memebers
+        let newGroup = sessions_db.sessions[selectedIndex].userData.tabGroups[
+          gId
+        ].filter((tab: tab) => tab.id != id);
+
         sessions_db.sessions[selectedIndex].userData.orderedEntries = newOrder;
 
-        //IF NEW GROUP IS EMPTY WE NEED TO JUST REMOVE IT FROM TABGROUPS CAN FILTER BY gID
-        //AND FILTER IT OUT FROM GROUPINFO
-        
-        if (newGroup.length === 0){
-          // Then we want to filter out the tabGroups such that it does not have that group anymore
-          let newGroupInfo = Object.fromEntries(Object.entries(sessions_db.sessions[selectedIndex].userData.tabGroups).filter(([id, _]) => id != gId))
-          
-          sessions_db.sessions[selectedIndex].userData.tabGroups = newGroupInfo
-          //And if the group is not -1 we want to filter out groupInfo so that it does not have any info on that group
-          if (gId != '-1'){
-            
-            const modifiedGroupInfo = {... sessions_db.sessions[selectedIndex].userData.groupInfo} //copy first to mutate
-            delete modifiedGroupInfo[gId]
-            sessions_db.sessions[selectedIndex].userData.groupInfo = modifiedGroupInfo
+        if (newGroup.length === EMPTY) {
+          let newGroupInfo = Object.fromEntries(
+            Object.entries(
+              sessions_db.sessions[selectedIndex].userData.tabGroups
+            ).filter(([id, _]) => id != gId)
+          );
+
+          sessions_db.sessions[selectedIndex].userData.tabGroups = newGroupInfo;
+
+          if (gId != OUT_OF_BOUNDS) {
+            const modifiedGroupInfo = {
+              ...sessions_db.sessions[selectedIndex].userData.groupInfo,
+            };
+            delete modifiedGroupInfo[gId];
+            sessions_db.sessions[selectedIndex].userData.groupInfo =
+              modifiedGroupInfo;
           }
-        }
-        else{
-          sessions_db.sessions[selectedIndex].userData.tabGroups[gId] = newGroup;
+        } else {
+          sessions_db.sessions[selectedIndex].userData.tabGroups[gId] =
+            newGroup;
         }
 
-        
+        await chrome.storage.local.set({ sessions: sessions_db.sessions });
 
-        
-        
-        await chrome.storage.local.set({ sessions: sessions_db.sessions  });
-        
         success = true;
       }
     }
@@ -136,7 +124,7 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
             image={favicon}
             sx={{
               maxWidth: 16,
-              backgroundColor: "grey", // light gray background #f0f0f0
+              backgroundColor: "grey",
               borderRadius: "4px",
               padding: "2px",
               border: "2px solid #ccc",
@@ -150,9 +138,6 @@ function TabCard({ favicon, url, title, index, id, setPopUpOpen }: TabCardProps)
         </Typography>
       </CardContent>
       <CardActions>
-        <Button size="small" sx={{ color: "green" }} onClick={handleTabOpen}>
-          Open Tab
-        </Button>
         <Button
           size="small"
           sx={{ color: "red" }}

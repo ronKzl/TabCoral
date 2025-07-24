@@ -1,5 +1,4 @@
 import ListItemButton from "@mui/material/ListItemButton";
-// import ListItemText from "@mui/material/ListItemText";
 import { setProfileIndex } from "../../profileSlice";
 import { useDispatch } from "react-redux";
 import ListItem from "@mui/material/ListItem";
@@ -17,8 +16,8 @@ interface ProfileListItemProps {
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
 
-const OUT_OF_BOUNDS = -1
-//const EXT_TAB_INDEX = 0
+const OUT_OF_BOUNDS = -1;
+const EXT_TAB_INDEX = 0;
 export default function ProfileListItem({
   session_id,
   session_index,
@@ -31,41 +30,32 @@ export default function ProfileListItem({
     isOpen: false,
     text: "",
   });
-  
 
   const [inputValue, setValue] = useState(session_name);
   const [isEditing, setIsEditing] = useState(false);
-  
 
-  async function handleDeletingProfile(
-    profileId: string
-  ) {
-    //show the pop up as pre-req
-    
+  async function handleDeletingProfile(profileId: string) {
     setalertDialogState({ isOpen: false, text: "" });
     let success = false;
-    //get all the sessions from the chrome store
+
     let sessions_db = await chrome.storage.local.get("sessions");
-    
-    //filter out all but the current ussing the sessionIndex which is the id so cant be changed
+
     let updated_sessions_db = sessions_db.sessions.filter(
       (session: session) => !(session.id === profileId)
     );
-    
+
     sessions_db.sessions = updated_sessions_db;
 
-    //save back
     await chrome.storage.local.set({
       sessions: sessions_db.sessions,
     });
-    
 
     chrome.storage.local.set({ currentSessionIndex: OUT_OF_BOUNDS });
     chrome.storage.local.set({ currentSessionId: OUT_OF_BOUNDS });
     dispatch(setProfileIndex(OUT_OF_BOUNDS));
 
     success = true;
-    //show the success snackbar
+
     if (success) {
       setPopUpOpen({
         open: true,
@@ -98,35 +88,25 @@ export default function ProfileListItem({
   };
 
   async function openCurrentSession(session_index: number) {
-    
-
-    //get current profiles from DB by selected index
     let profiles = (await chrome.storage.local.get("sessions")) as {
       sessions: session[];
     };
 
     let profile = profiles.sessions[session_index];
     const { groupInfo, tabGroups } = profile.userData;
-    
 
     if (Object.keys(tabGroups ?? {}).length > 0) {
-      //Clear all tabs of current session from the tab bar?
-      //query all tabs and call close
-      //UNCOMENT WHEN ALL WORK ON EXTENSION IS DONE
-      // await chrome.tabs.query({}, function(tabs) {
-      //   tabs.forEach((tab) => {
-      //     if (tab?.id !== undefined && tab?.index !== EXT_TAB_INDEX){
-      //       
-      //       chrome.tabs.remove(tab.id) //UNCOMENT WHEN ALL WORK ON EXTENSION IS DONE
-      //     }
+      await chrome.tabs.query({}, function (tabs) {
+        tabs.forEach((tab) => {
+          if (tab?.id !== undefined && tab?.index !== EXT_TAB_INDEX) {
+            chrome.tabs.remove(tab.id);
+          }
+        });
+      });
 
-      //   })
-      // });
-      
       for (const [groupId, groupTabs] of Object.entries(tabGroups)) {
         let groupTabIds = await Promise.all(
           groupTabs.map(async (tab) => {
-            
             let newTab = await chrome.tabs.create({
               active: false,
               index: tab.index,
@@ -135,15 +115,13 @@ export default function ProfileListItem({
             return newTab.id;
           })
         );
-        
-        //filter on to get out undefined ids
+
         let cleanIds: number[] = groupTabIds.filter((id) => {
           return id !== undefined;
         });
         if (groupId !== OUT_OF_BOUNDS.toString()) {
-          //put the tabs into 1 group
           let newGroupId = await chrome.tabs.group({ tabIds: cleanIds });
-          //now that group is avaiable can style it
+
           chrome.tabGroups.update(newGroupId, {
             collapsed: groupInfo[groupId].collapsed,
             color: groupInfo[groupId].color,
@@ -157,7 +135,7 @@ export default function ProfileListItem({
   async function handleProfileNameUpdate() {
     setIsEditing(false);
     let profiles = await chrome.storage.local.get("sessions");
-    
+
     profiles.sessions[session_index].name = inputValue;
     await chrome.storage.local.set({ sessions: profiles.sessions });
   }
@@ -229,10 +207,10 @@ export default function ProfileListItem({
             label: { color: "white" },
             borderBottom: "1px solid white",
             "& .MuiInput-underline:after": {
-              borderBottomColor: "white", // bottom border when focused
+              borderBottomColor: "white",
             },
             "& .MuiInputLabel-root.Mui-focused": {
-              color: "white", // Label color when focused
+              color: "white",
             },
           }}
         />

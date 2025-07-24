@@ -1,7 +1,3 @@
-//TODO: srviceworker send function
-//TODO: cleanup file
-//TODO: improve styling of components/add css or framework file
-
 //metadata
 const tabColorMap = {
   grey: "#5f6368",
@@ -19,7 +15,7 @@ const groupInfo = new Map(); //gorupIndex, GroupInfo - color, title, collapsed
 const orderedEntries = [];
 let mainWindow = document.getElementById("display");
 
-//TODO: cleanup later when MVP done
+
 //init main save all btn
 let header = document.getElementById("header");
 header.style.display = "flex";
@@ -30,7 +26,7 @@ btn.onclick = () => {
   chrome.storage.local.get("currentSessionId").then(({ currentSessionId }) => {
     
     if (currentSessionId === undefined || currentSessionId < 0){
-      return; //todo: Some kind of msg 
+      return; 
     }
   
     
@@ -139,7 +135,7 @@ function createTabListEntry(favIconUrl, title, url) {
   return listItem;
 }
 //The main creation function that
-//TODO: clean this function up, try to seperate and figure out cleaner logic if possible to insert dividers
+
 function populateCoral() {
   let curGroup = -2;
   let sawGroup = false;

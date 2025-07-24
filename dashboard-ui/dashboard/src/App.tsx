@@ -22,9 +22,11 @@ export interface PopUpState {
 }
 
 function App() {
-  const label = { inputProps: { "aria-label": "switch between group and tab view" } };
+  const label = {
+    inputProps: { "aria-label": "switch between group and tab view" },
+  };
   const [isChecked, setIsChecked] = useState(true);
-  
+
   const [popUp, setPopUpOpen] = useState<PopUpState>({
     open: false,
     duration: 0,
@@ -45,10 +47,10 @@ function App() {
     />
   );
 
-   async function handleCreatingNewProfile(){
-    let res = await chrome.runtime.sendMessage({type: "CREATE_NEW_PROFILE"});
-    
-    if (res.success){
+  async function handleCreatingNewProfile() {
+    let res = await chrome.runtime.sendMessage({ type: "CREATE_NEW_PROFILE" });
+
+    if (res.success) {
       setPopUpOpen({
         open: true,
         duration: 3000,
@@ -56,30 +58,24 @@ function App() {
         status: "success",
         variant: "filled",
       });
-    }
-    else {
+    } else {
       setPopUpOpen({
         open: true,
         duration: 8000,
-        message:
-          "Error: profile limit reached or data error in transit.",
+        message: "Error: profile limit reached or data error in transit.",
         status: "error",
         variant: "filled",
       });
     }
-
   }
 
   const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked);
   };
   const dispatch = useDispatch();
-  
+
   useEffect(() => {
-    //mount array [each entry is 1 session that can be reconstructed]
-    //sessions collection of session that consists of -> (ordered tabs, group metadata, tab metadata)
     chrome.storage.local.get("sessions").then((store) => {
-      
       dispatch(setSessions(store.sessions || []));
     });
 
@@ -92,24 +88,27 @@ function App() {
     });
 
     chrome.storage.local.get("currentSessionIndex").then((res) => {
-      const index = res.currentSessionIndex
-      if (typeof index === "number" && index >= 0){
-        dispatch(setProfileIndex(index))
-      }
-      else{
-        dispatch(setProfileIndex(-1))
+      const index = res.currentSessionIndex;
+      if (typeof index === "number" && index >= 0) {
+        dispatch(setProfileIndex(index));
+      } else {
+        dispatch(setProfileIndex(-1));
       }
     });
-
   }, []);
-
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid size={2}>
-          <Button onClick={() => handleCreatingNewProfile()} sx={{backgroundColor:"green"}} variant="contained">New Profile</Button>
-          <ProfilesList setPopUpOpen={setPopUpOpen}/>
+          <Button
+            onClick={() => handleCreatingNewProfile()}
+            sx={{ backgroundColor: "green" }}
+            variant="contained"
+          >
+            New Profile
+          </Button>
+          <ProfilesList setPopUpOpen={setPopUpOpen} />
         </Grid>
         <Grid size={8}>
           <Box component="section" sx={{ p: 2 }}>
@@ -121,22 +120,16 @@ function App() {
         <Grid size={2}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Typography>Tab View</Typography>
-            <Switch {...label} checked={isChecked} color="default" onChange={handleViewChange} />
+            <Switch
+              {...label}
+              checked={isChecked}
+              color="default"
+              onChange={handleViewChange}
+            />
             <Typography>Group View</Typography>
           </Stack>
         </Grid>
       </Grid>
-      {/* <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-        <Typography>Tab View</Typography>
-        <Switch {...label} color="default" onChange={handleViewChange}/>
-        <Typography>Group View</Typography>
-      </Stack>
-    <ProfilesList />
-    <Box component="section" sx={{ p: 2 }}>
-          {isChecked &&  <GroupWindow setPopUpOpen={setPopUpOpen}/> }
-          {!isChecked && <TabWindow setPopUpOpen={setPopUpOpen}/>}
-          {popup_card}
-    </Box> */}
     </Box>
   );
 }
