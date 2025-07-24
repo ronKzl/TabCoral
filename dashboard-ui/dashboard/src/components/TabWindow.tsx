@@ -15,17 +15,12 @@ function TabWindow({setPopUpOpen}: TabWindowProps) {
     //data retrieveal is happening from the redux store! ()
     const sessions = useSelector((state: sessions) => state.sessions)
     const selectedIndex = useAppSelector((state) => state.profile.selectedIndex)
-    console.log("TabWindow mount");
-    console.log("sesh index")
-    console.log(selectedIndex)
+    
     if (selectedIndex < 0 || selectedIndex >= sessions.length ) return <div>No profile selected.</div> //TODO: style here
 
-    const cur_session_id = sessions[selectedIndex].id
+    
     const tabs = sessions[selectedIndex].userData.orderedEntries
-    console.log("Data on sessions,cur_sesh_id,tabs")
-    console.log(sessions)
-    console.log(cur_session_id)
-    console.log(tabs)
+    
     // const groupInfo = sessions[selectedIndex].userData.groupInfo
     return (
     <Box sx={{ flexGrow: 1 }}>

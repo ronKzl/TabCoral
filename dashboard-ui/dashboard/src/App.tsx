@@ -47,7 +47,7 @@ function App() {
 
    async function handleCreatingNewProfile(){
     let res = await chrome.runtime.sendMessage({type: "CREATE_NEW_PROFILE"});
-    console.log(res)
+    
     if (res.success){
       setPopUpOpen({
         open: true,
@@ -79,15 +79,13 @@ function App() {
     //mount array [each entry is 1 session that can be reconstructed]
     //sessions collection of session that consists of -> (ordered tabs, group metadata, tab metadata)
     chrome.storage.local.get("sessions").then((store) => {
-      console.log("first time");
+      
       dispatch(setSessions(store.sessions || []));
     });
 
     chrome.storage.onChanged.addListener((changes, area) => {
       if (area === "local" && changes.sessions) {
-        chrome.storage.local.get("sessions").then(console.log);
         chrome.storage.local.get("sessions").then((store) => {
-          console.log("Updated sessions:", store.sessions);
           dispatch(setSessions(store.sessions || []));
         });
       }

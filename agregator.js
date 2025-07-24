@@ -26,10 +26,9 @@ header.style.display = "flex";
 const btn = document.createElement("button");
 btn.textContent = "Save All";
 btn.onclick = () => {
-  console.log("Comm with the service worker to save all....");
   
   chrome.storage.local.get("currentSessionId").then(({ currentSessionId }) => {
-    console.log("Selected session id is", currentSessionId);
+    
     if (currentSessionId === undefined || currentSessionId < 0){
       return; //todo: Some kind of msg 
     }
@@ -88,8 +87,7 @@ chrome.tabs.query({ currentWindow: true }, (tabs) => {
   formGroupInfo().then(() => {
     populateCoral();
   });
-  console.log(tabGroups);
-  console.log(groupInfo);
+
 });
 
 //create the groupMap with groupInfo
@@ -153,9 +151,7 @@ function populateCoral() {
       const btn = document.createElement("button");
       btn.textContent = "Save Tab";
       btn.style.cursor = "pointer";
-      btn.onclick = () => {
-        console.log("Comm with the service worker....");
-      };
+      
       ulist.append(btn);
       comingFromUngroup = true;
       //make line
@@ -184,9 +180,7 @@ function populateCoral() {
         const btn = document.createElement("button");
         btn.textContent = "Save Group";
         btn.style.cursor = "pointer";
-        btn.onclick = () => {
-          console.log("Comm with the service worker....");
-        };
+        
         btn.style.marginLeft = "15px";
         h2.appendChild(btn);
         ulist.appendChild(h2);
@@ -200,6 +194,4 @@ function populateCoral() {
   mainWindow.appendChild(ulist);
 }
 
-function saveAll() {
-  console.log("saving entire session");
-}
+

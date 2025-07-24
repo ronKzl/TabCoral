@@ -41,9 +41,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); 
   const [alertDialogState, setalertDialogState] = useState({isOpen:false,text:""});
 
-  console.log("GroupWindow mount");
-  console.log("sesh group index")
-  console.log(selectedIndex)
+  
   if (selectedIndex < 0 || selectedIndex >= sessions.length ) return <div>No profile selected.</div> //TODO: style here
 
   // const tabs = useSessionSelector(
@@ -55,8 +53,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   //   (state) => state.sessions[selectedIndex]?.userData.groupInfo ?? {}
   // ) as Record<string, group>;
   const groupInfo = sessions[selectedIndex].userData.groupInfo ?? {} as Record<string, group>;
-  console.log(tabs)
-  console.log(groupInfo)
+  
   const open = Boolean(anchorEl);
   
   
@@ -84,7 +81,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   async function handleGroupOpen() {
     //open the tabs that belonged in this group
     let groupTabIds = await Promise.all(tabs[selectedGroupId].map(async (tab) => {
-      console.log(tab.id)
+      
       let newTab = await chrome.tabs.create({active: false, index: tab.index, url: tab.url})
       return newTab.id}))
     
@@ -109,7 +106,7 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
   
   async function handleGroupRemovalFromSession() {
     setalertDialogState({isOpen:false, text:""})
-    console.log(`Will now remove session and tabs associated with ${selectedGroupId}`)
+   
     let success = false
     
     //first get the state from the DB
@@ -120,31 +117,26 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
       
       //We can then get all the tab Ids from tabGroups from the tabs
       let groupTabsRemove = Object.entries(tabs).find(([id, _]) => id === selectedGroupId)?.[1]
-      console.log(groupTabsRemove) 
+    
       let tabIds = groupTabsRemove?.map((t: tab) => t.id)
-      console.log(tabIds) 
+     
       //Filter the ordered Entities based on the ids to not have them
       if (tabIds != undefined  && tabIds.length != 0){
-          console.log("Tab Removal is happening here!")
+          
           let orderedEntries = currentSession.userData.orderedEntries
-          console.log(orderedEntries)
-          console.log(orderedEntries.length)
+          
           let newOrderedEntries = orderedEntries.filter((t: tab) => !(tabIds.includes(t.id)))
-          console.log(newOrderedEntries)
-          console.log(newOrderedEntries.length)
+        
           currentSession.userData.orderedEntries = newOrderedEntries
       }
 
       // Then we want to filter out the tabGroups such that it does not have that group anymore
       let newGroupInfo = Object.fromEntries(Object.entries(tabs).filter(([id, _]) => id != selectedGroupId))
-      console.log("Removed the group and its tabs from tabGroups:")
-      console.log(newGroupInfo)
+      
       currentSession.userData.tabGroups = newGroupInfo
       //And if the group is not -1 we want to filter out groupInfo so that it does not have any info on that group
       if (selectedGroupId != '-1'){
-        console.log("Trying to delete it from the cosmetic group")
-        console.log(groupInfo)
-        console.log(groupInfo[selectedGroupId])
+        
         const modifiedGroupInfo = {... groupInfo} //copy first to mutate
         delete modifiedGroupInfo[selectedGroupId]
         currentSession.userData.groupInfo = modifiedGroupInfo
@@ -152,13 +144,11 @@ function GroupWindow({setPopUpOpen}: GroupWindowProps) {
       //Set state for the selectedGroupId to be something else
       setSelectedGroupId('-2')
       //Attempt to save the new modified state to the db
-      console.log("New db before saving!");
-      console.log(currentSession)
-      console.log("All updated sessions before saving!");
+      
       sessions_db.sessions[selectedIndex] = currentSession
-      console.log("attempting to save");                                                 
-      let res = await chrome.storage.local.set({ sessions: sessions_db.sessions  });
-      console.log(res);
+                                                      
+      await chrome.storage.local.set({ sessions: sessions_db.sessions  });
+      
       success = true
     }
     
