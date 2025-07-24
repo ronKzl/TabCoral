@@ -1,7 +1,10 @@
-//keep track of the id of the dashboard extension tab
+// ======================
+// Constants & Globals
+// ======================
+const MAX_PROFILES = 10;
+const OUT_OF_BOUNDS = -1;
 let extensionTab = null;
 
-const MAX_PROFILES = 10;
 const tabColorMap = {
   grey: "#5f6368",
   blue: "#1a73e8",
@@ -13,193 +16,154 @@ const tabColorMap = {
   cyan: "#007b83",
   orange: "#fa903e",
 };
-const OUT_OF_BOUNDS = -1;
 
-//on first install,update,closing of chrome
-chrome.runtime.onInstalled.addListener((details) => {
-  if (details.reason === "install" || details.reason === "update") {
-    //make the dashboard
-    openDashboard();
-  }
+// ======================
+// Initialization
+// ======================
+chrome.runtime.onInstalled.addListener(() => {
+  openDashboard();
+  createContextMenus();
 });
 
-//On a specific tab remove ~ so that you always have the dashbaord tab open in chrome
-chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-  if (extensionTab && tabId === extensionTab) {
-    openDashboard();
-  }
+// Keep dashboard alive
+chrome.tabs.onRemoved.addListener((tabId) => {
+  if (tabId === extensionTab) openDashboard();
 });
 
-//Worker Helpers
+// ======================
+// Core Functions
+// ======================
 
-//Opens the extension dashboard html page and records its tab id for later use
+// Opens the dashboard and stores its tab ID
 function openDashboard() {
   chrome.tabs.create(
     { url: "dashboard-ui/dashboard/dist/index.html", pinned: true, index: 0 },
-    (tab) => {
-      extensionTab = tab.id; //reassign id to new one
-    }
+    (tab) => (extensionTab = tab.id)
   );
 }
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: "openSidePanel",
-    title: "Open side panel",
-    contexts: ["all"],
-  });
-});
+// Creates all context menu items
+function createContextMenus() {
+  const menuItems = [
+    { id: "openSidePanel", title: "Open side panel" },
+    { id: "saveCurProfile", title: "Save tabs and groups to profile." },
+    { id: "createNewProfile", title: "Create new profile." },
+  ];
+  menuItems.forEach((item) => chrome.contextMenus.create({ ...item, contexts: ["all"] }));
+}
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: "saveCurProfile",
-    title: "Save tabs and groups to profile.",
-    contexts: ["all"],
-  });
-});
+// Generic profile creation
+async function createProfile(name = "New Profile") {
+  const { sessions = [] } = await chrome.storage.local.get("sessions");
+  if (sessions.length >= MAX_PROFILES) return { success: false };
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: "createNewProfile",
-    title: "Create new profile.",
-    contexts: ["all"],
-  });
-});
+  const newProfile = {
+    id: crypto.randomUUID(),
+    name,
+    savedAt: new Date().toISOString(),
+    userData: {},
+  };
+  sessions.push(newProfile);
+  await chrome.storage.local.set({ sessions });
+  return { success: true };
+}
 
-chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "openSidePanel") {
-    // This will open the panel in all the pages on the current window.
-    chrome.sidePanel.open({ windowId: tab.windowId });
-  }
-});
+// Collects tab and group data from the current window
+async function collectTabData() {
+  const tabs = await chrome.tabs.query({ currentWindow: true });
+  const tabGroups = new Map();
+  const groupInfo = new Map();
+  const orderedEntries = [];
 
-chrome.contextMenus.onClicked.addListener((info, _) => {
-  if (info.menuItemId === "createNewProfile") {
-    chrome.storage.local.get("sessions").then((store) => {
-      const allProfiles = store.sessions || [];
-      if (allProfiles.length < MAX_PROFILES) {
-        let newProfileData = {
-          id: crypto.randomUUID(),
-          name: "New Profile",
-          savedAt: new Date().toISOString(),
-          userData: {},
-        };
-        allProfiles.push(newProfileData);
-        chrome.storage.local.set({ sessions: allProfiles });
-      }
+  for (const tab of tabs) {
+    if (tab.id === extensionTab) continue; // skip dashboard
+    if (!tabGroups.has(tab.groupId)) tabGroups.set(tab.groupId, []);
+    tabGroups.get(tab.groupId).push({
+      index: tab.index,
+      favicon: tab.favIconUrl,
+      title: tab.title,
+      url: tab.url,
+      id: tab.id,
+    });
+    orderedEntries.push({
+      index: tab.index,
+      groupId: tab.groupId,
+      favicon: tab.favIconUrl,
+      title: tab.title,
+      url: tab.url,
+      id: tab.id,
     });
   }
-});
 
-chrome.contextMenus.onClicked.addListener((info, _) => {
-  if (info.menuItemId === "saveCurProfile") {
-    const tabGroups = new Map(); // groupIndex, TabInfo - index, fav, url, text
-    const groupInfo = new Map(); //gorupIndex, GroupInfo - color, title, collapsed
-    const orderedEntries = [];
-    chrome.tabs.query({ currentWindow: true }, (tabs) => {
-      //store all the grouped and ungrouped windows
-      tabs.forEach((tab) => {
-        //skip first tab it will be the extension
-        if (tab.index === 0) {
-          return;
-        }
-        //if entry DNE
-        if (!tabGroups.has(tab.groupId)) {
-          tabGroups.set(tab.groupId, []);
-        }
-        //set the value
-        tabGroups.get(tab.groupId).push({
-          index: tab.index,
-          favicon: tab.favIconUrl,
-          title: tab.title,
-          url: tab.url,
-          id: tab.id,
-        });
-        //save the order as well
-        orderedEntries.push({
-          index: tab.index,
-          groupId: tab.groupId,
-          favicon: tab.favIconUrl,
-          title: tab.title,
-          url: tab.url,
-          id: tab.id,
-        });
+  for (const groupId of tabGroups.keys()) {
+    if (groupId !== OUT_OF_BOUNDS) {
+      const group = await chrome.tabGroups.get(groupId);
+      groupInfo.set(groupId, {
+        title: group.title,
+        color: group.color,
+        collapsed: group.collapsed,
       });
-      tabGroups.forEach((tabs, groupId) => {
-        if (groupId !== OUT_OF_BOUNDS) {
-          chrome.tabGroups.get(groupId, (group) => {
-            groupInfo.set(groupId, {
-              title: group.title,
-              color: group.color,
-              collapsed: group.collapsed,
-            });
-          });
-        }
-      });
-
-      chrome.storage.local
-        .get("currentSessionId")
-        .then(({ currentSessionId }) => {
-          console.log("Selected session id is", currentSessionId);
-          if (currentSessionId === undefined || currentSessionId < 0) {
-            return; //todo: Some kind of msg
-          }
-
-          chrome.storage.local.get("sessions").then((store) => {
-            const allProfiles = store.sessions || [];
-            const existingIndex = allProfiles.findIndex(
-              (w) => w.id === currentSessionId
-            );
-            if (existingIndex !== OUT_OF_BOUNDS) {
-              //update the existing one
-              const safeData = {
-                tabGroups: Object.fromEntries(tabGroups),
-                groupInfo: Object.fromEntries(groupInfo),
-                orderedEntries: orderedEntries,
-              };
-              allProfiles[existingIndex].userData = safeData;
-              allProfiles[existingIndex].savedAt = new Date().toISOString();
-              return chrome.storage.local.set({ sessions: allProfiles });
-            }
-          });
-        });
-    });
+    }
   }
+
+  return {
+    tabGroups: Object.fromEntries(tabGroups),
+    groupInfo: Object.fromEntries(groupInfo),
+    orderedEntries,
+  };
+}
+
+// Updates a session with new tab data
+async function updateCurrentSession(tabData) {
+  const { currentSessionId } = await chrome.storage.local.get("currentSessionId");
+  if (!currentSessionId || currentSessionId < 0) {
+    console.warn("No active session ID found.");
+    return;
+  }
+
+  const { sessions = [] } = await chrome.storage.local.get("sessions");
+  const idx = sessions.findIndex((w) => w.id === currentSessionId);
+  if (idx !== OUT_OF_BOUNDS) {
+    sessions[idx].userData = tabData;
+    sessions[idx].savedAt = new Date().toISOString();
+    await chrome.storage.local.set({ sessions });
+  }
+}
+
+// ======================
+// Context Menu Handling
+// ======================
+chrome.contextMenus.onClicked.addListener(async (info, tab) => {
+  const handlers = {
+    openSidePanel: async () => chrome.sidePanel.open({ windowId: tab.windowId }),
+    createNewProfile: async () => await createProfile(),
+    saveCurProfile: async () => {
+      const tabData = await collectTabData();
+      await updateCurrentSession(tabData);
+    },
+  };
+
+  if (handlers[info.menuItemId]) await handlers[info.menuItemId]();
 });
 
-chrome.runtime.onMessage.addListener((msg, sender) => {
-  if (msg.type === "SAVE_ALL") {
-    chrome.storage.local.get("sessions").then((store) => {
-      const allProfiles = store.sessions || [];
-      const existingIndex = allProfiles.findIndex((w) => w.id === msg.data.id);
-      if (existingIndex !== OUT_OF_BOUNDS) {
-        // Overwrite the existing one
-        allProfiles[existingIndex] = msg.data;
-      }
-      return chrome.storage.local.set({ sessions: allProfiles });
-    });
-  }
-});
-
+// ======================
+// Message Handling
+// ======================
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.type === "CREATE_NEW_PROFILE") {
-    chrome.storage.local.get("sessions").then((store) => {
-      const allProfiles = store.sessions || [];
-      if (allProfiles.length >= MAX_PROFILES) {
-        sendResponse({ success: false }); //, reason: "max_profiles" } TODO: for later
-      } else {
-        let newProfileData = {
-          id: crypto.randomUUID(),
-          name: "",
-          savedAt: new Date().toISOString(),
-          userData: {},
-        };
-        allProfiles.push(newProfileData);
-        chrome.storage.local.set({ sessions: allProfiles }).then(() => {
-          sendResponse({ success: true });
-        });
-      }
-    });
-  }
-  return true; //keep channel open for async use
+  const actions = {
+    SAVE_ALL: async () => {
+      const { sessions = [] } = await chrome.storage.local.get("sessions");
+      const idx = sessions.findIndex((w) => w.id === msg.data.id);
+      if (idx !== OUT_OF_BOUNDS) sessions[idx] = msg.data;
+      await chrome.storage.local.set({ sessions });
+    },
+    CREATE_NEW_PROFILE: async () => {
+      const result = await createProfile();
+      sendResponse(result);
+    },
+  };
+
+  if (actions[msg.type]) actions[msg.type]();
+  return true; // Keep the response channel open for async calls
 });
+
