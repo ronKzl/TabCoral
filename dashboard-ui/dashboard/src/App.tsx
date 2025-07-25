@@ -101,7 +101,7 @@ function App() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        <Grid size={{md: 3}}>
+        <Grid size={3}>
           <Button
             fullWidth
             onClick={() => handleCreatingNewProfile()}
@@ -112,14 +112,14 @@ function App() {
           </Button>
           <ProfilesList setPopUpOpen={setPopUpOpen} />
         </Grid>
-        <Grid size={{md:7}}>
-          <Box component="section" sx={{ p: 2 }}>
+        <Grid size={7}> 
+          
             {isChecked && <GroupWindow setPopUpOpen={setPopUpOpen} />}
             {!isChecked && <TabWindow setPopUpOpen={setPopUpOpen} />}
             {popup_card}
-          </Box>
+          
         </Grid>
-        <Grid size={{md:2}}>
+        <Grid size={2} sx={{pr: 2}}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Typography>Tab View</Typography>
             <Switch
