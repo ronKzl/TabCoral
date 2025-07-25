@@ -24,10 +24,10 @@ function TabWindow({ setPopUpOpen }: TabWindowProps) {
       <Grid
         container
         spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 4, sm: 8, md: 12 }}
+        columns={{ xs: 2, sm: 4, md: 8, lg: 12, xl: 12 }}
       >
         {tabs?.map((tab) => (
-          <Grid key={tab.index} size={{ xs: 2, sm: 4, md: 4 }}>
+          <Grid key={tab.index} size={{ xs: 2, sm: 4, md: 4,lg:4,xl:4 }}>
             <TabCard
               id={tab.id}
               favicon={tab.favicon}

@@ -13,6 +13,7 @@ import ProfilesList from "./components/Lists/ProfilesList";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import { setProfileIndex } from "./profileSlice";
+
 export interface PopUpState {
   open: boolean;
   message: string;
@@ -100,8 +101,9 @@ function App() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        <Grid size={2}>
+        <Grid size={{md: 3}}>
           <Button
+            fullWidth
             onClick={() => handleCreatingNewProfile()}
             sx={{ backgroundColor: "green" }}
             variant="contained"
@@ -110,14 +112,14 @@ function App() {
           </Button>
           <ProfilesList setPopUpOpen={setPopUpOpen} />
         </Grid>
-        <Grid size={8}>
+        <Grid size={{md:7}}>
           <Box component="section" sx={{ p: 2 }}>
             {isChecked && <GroupWindow setPopUpOpen={setPopUpOpen} />}
             {!isChecked && <TabWindow setPopUpOpen={setPopUpOpen} />}
             {popup_card}
           </Box>
         </Grid>
-        <Grid size={2}>
+        <Grid size={{md:2}}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Typography>Tab View</Typography>
             <Switch
