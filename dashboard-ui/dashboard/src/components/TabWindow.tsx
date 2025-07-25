@@ -6,7 +6,7 @@ import TabCard from "./TabCard";
 import { type PopUpState } from "../App";
 import { useAppSelector } from "../hooks";
 import EmptyWindow from "./Skeletons/EmptyWindow";
-
+import EmptyProfilePrompt from "./Skeletons/EmptyProfile";
 interface TabWindowProps {
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
 }
@@ -18,7 +18,9 @@ function TabWindow({ setPopUpOpen }: TabWindowProps) {
   if (selectedIndex < 0 || selectedIndex >= sessions.length)
     return <EmptyWindow setPopUpOpen={setPopUpOpen}/>;
 
-  const tabs = sessions[selectedIndex].userData.orderedEntries;
+  const tabs = sessions[selectedIndex].userData.orderedEntries?? [];
+  if (tabs.length < 1)
+    return <EmptyProfilePrompt />
 
   return (
     <Box sx={{ flexGrow: 1 }}>

@@ -130,6 +130,11 @@ async function updateCurrentSession(tabData) {
   }
 }
 
+async function saveCurrentProfile() {
+  const tabData = await collectTabData();
+  await updateCurrentSession(tabData);
+}
+
 // ======================
 // Context Menu Handling
 // ======================
@@ -138,8 +143,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     openSidePanel: async () => chrome.sidePanel.open({ windowId: tab.windowId }),
     createNewProfile: async () => await createProfile(),
     saveCurProfile: async () => {
-      const tabData = await collectTabData();
-      await updateCurrentSession(tabData);
+      await saveCurrentProfile()
     },
   };
 
@@ -152,10 +156,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   const actions = {
     SAVE_ALL: async () => {
-      const { sessions = [] } = await chrome.storage.local.get("sessions");
-      const idx = sessions.findIndex((w) => w.id === msg.data.id);
-      if (idx !== OUT_OF_BOUNDS) sessions[idx] = msg.data;
-      await chrome.storage.local.set({ sessions });
+      await saveCurrentProfile();
     },
     CREATE_NEW_PROFILE: async () => {
       const result = await createProfile();

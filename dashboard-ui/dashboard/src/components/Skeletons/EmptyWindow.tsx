@@ -54,7 +54,8 @@ function EmptyWindow({setPopUpOpen}:EmptyWindowProps) {
           No Profile Selected
         </Typography>
         <Typography variant="body2" sx={{ mb: 3, color: "grey.400" }}>
-          Please select or create a profile to get started. <b>MAX: 10.</b>
+          Please select or create  profile to get started. (<b>MAX: 10.</b>)
+          You can also create your profile by right-clicking and using the extension dropdown!
         </Typography>
         <Button
           variant="contained"
