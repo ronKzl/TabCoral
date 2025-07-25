@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import PopUpBar from "./components/Actions/PopUpBar";
 import ProfilesList from "./components/Lists/ProfilesList";
 import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+
 import { setProfileIndex } from "./profileSlice";
 
 export interface PopUpState {
@@ -48,27 +48,27 @@ function App() {
     />
   );
 
-  async function handleCreatingNewProfile() {
-    let res = await chrome.runtime.sendMessage({ type: "CREATE_NEW_PROFILE" });
+  // async function handleCreatingNewProfile() {
+  //   let res = await chrome.runtime.sendMessage({ type: "CREATE_NEW_PROFILE" });
 
-    if (res.success) {
-      setPopUpOpen({
-        open: true,
-        duration: 3000,
-        message: "New Profile Created!",
-        status: "success",
-        variant: "filled",
-      });
-    } else {
-      setPopUpOpen({
-        open: true,
-        duration: 8000,
-        message: "Error: profile limit reached or data error in transit.",
-        status: "error",
-        variant: "filled",
-      });
-    }
-  }
+  //   if (res.success) {
+  //     setPopUpOpen({
+  //       open: true,
+  //       duration: 3000,
+  //       message: "New Profile Created!",
+  //       status: "success",
+  //       variant: "filled",
+  //     });
+  //   } else {
+  //     setPopUpOpen({
+  //       open: true,
+  //       duration: 8000,
+  //       message: "Error: profile limit reached or data error in transit.",
+  //       status: "error",
+  //       variant: "filled",
+  //     });
+  //   }
+  // }
 
   const handleViewChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsChecked(event.target.checked);
@@ -102,24 +102,14 @@ function App() {
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
         <Grid size={3}>
-          <Button
-            fullWidth
-            onClick={() => handleCreatingNewProfile()}
-            sx={{ backgroundColor: "green" }}
-            variant="contained"
-          >
-            New Profile
-          </Button>
           <ProfilesList setPopUpOpen={setPopUpOpen} />
         </Grid>
-        <Grid size={7}> 
-          
-            {isChecked && <GroupWindow setPopUpOpen={setPopUpOpen} />}
-            {!isChecked && <TabWindow setPopUpOpen={setPopUpOpen} />}
-            {popup_card}
-          
+        <Grid size={7}>
+          {isChecked && <GroupWindow setPopUpOpen={setPopUpOpen} />}
+          {!isChecked && <TabWindow setPopUpOpen={setPopUpOpen} />}
+          {popup_card}
         </Grid>
-        <Grid size={2} sx={{pr: 2}}>
+        <Grid size={2} sx={{ pr: 2 }}>
           <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
             <Typography>Tab View</Typography>
             <Switch

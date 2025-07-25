@@ -32,7 +32,9 @@ A user-behavior driven checklist to guide development.
 - [x] User is able to rename a profile 
 - [x] QOL updates to profiles and extension usability workflow & bugfixes
 - [ ] Styling  <--- WIP
+- [ ] Chrome related publishing
 
 ## Post MVP
 - [ ] Cross Browser Sync
+- [ ] Pagination on tab view
 - [ ] App themes (black, white, etc.)

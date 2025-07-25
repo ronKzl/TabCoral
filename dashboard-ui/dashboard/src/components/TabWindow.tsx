@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import TabCard from "./TabCard";
 import { type PopUpState } from "../App";
 import { useAppSelector } from "../hooks";
+import EmptyWindow from "./Skeletons/EmptyWindow";
 
 interface TabWindowProps {
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
@@ -15,7 +16,7 @@ function TabWindow({ setPopUpOpen }: TabWindowProps) {
   const selectedIndex = useAppSelector((state) => state.profile.selectedIndex);
 
   if (selectedIndex < 0 || selectedIndex >= sessions.length)
-    return <div>No profile selected.</div>; //TODO: style here
+    return <EmptyWindow setPopUpOpen={setPopUpOpen}/>;
 
   const tabs = sessions[selectedIndex].userData.orderedEntries;
 

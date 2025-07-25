@@ -19,6 +19,7 @@ import {
   type session,
 } from "../interfaces/session";
 import { useSelector } from "react-redux";
+import EmptyWindow from "./Skeletons/EmptyWindow";
 
 interface GroupWindowProps {
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
@@ -50,10 +51,10 @@ function GroupWindow({ setPopUpOpen }: GroupWindowProps) {
   });
 
   if (selectedIndex < 0 || selectedIndex >= sessions.length)
-    return <div>No profile selected.</div>; 
+    return <EmptyWindow setPopUpOpen={setPopUpOpen}/>; 
 
   const tabs = sessions[selectedIndex].userData.tabGroups ?? ({} as session);
-
+  
   const groupInfo =
     sessions[selectedIndex].userData.groupInfo ?? ({} as Record<string, group>);
 
