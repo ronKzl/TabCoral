@@ -6,9 +6,6 @@
   "background": {
     "service_worker": "service-worker.js"
   },
-  "side_panel": {
-    "default_path": "coral.html"
-  },
   "permissions": ["tabs", "tabGroups", "contextMenus", "sidePanel","storage"],
    "icons": {
     "16": "icon16.png",

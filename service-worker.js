@@ -45,9 +45,8 @@ function openDashboard() {
 // Creates all context menu items
 function createContextMenus() {
   const menuItems = [
-    { id: "openSidePanel", title: "Open side panel" },
-    { id: "saveCurProfile", title: "Save tabs and groups to profile." },
-    { id: "createNewProfile", title: "Create new profile." },
+    { id: "saveCurProfile", title: "Save Tabs and Groups to Profile" },
+    { id: "createNewProfile", title: "Create New Profile" },
   ];
   menuItems.forEach((item) => chrome.contextMenus.create({ ...item, contexts: ["all"] }));
 }
@@ -140,7 +139,6 @@ async function saveCurrentProfile() {
 // ======================
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   const handlers = {
-    openSidePanel: async () => chrome.sidePanel.open({ windowId: tab.windowId }),
     createNewProfile: async () => await createProfile(),
     saveCurProfile: async () => {
       await saveCurrentProfile()

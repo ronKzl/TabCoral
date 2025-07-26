@@ -31,8 +31,8 @@ A user-behavior driven checklist to guide development.
 - [x] User is able to restore profiles to browser
 - [x] User is able to rename a profile 
 - [x] QOL updates to profiles and extension usability workflow & bugfixes
-- [ ] Styling  <--- WIP
-- [ ] Chrome related publishing
+- [x] Styling 
+- [ ] Chrome related publishing <--- WIP
 
 ## Post MVP
 - [ ] Cross Browser Sync
