@@ -6,6 +6,10 @@
   "background": {
     "service_worker": "service-worker.js"
   },
+  "action": {
+        "default_popup": "popup.html",
+        "default_title": "TabCoral Window"
+      },
   "permissions": ["tabs", "tabGroups", "contextMenus", "sidePanel","storage"],
    "icons": {
     "16": "icon16.png",
