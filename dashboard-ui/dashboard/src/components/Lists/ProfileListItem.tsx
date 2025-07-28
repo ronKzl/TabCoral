@@ -188,12 +188,15 @@ export default function ProfileListItem({
           variant="standard"
           label={
             (isEditing && "Editing Profile...") ||
-            (!isEditing && "Edit Profile Name")
+            (!isEditing && inputValue === "New Profile" && "Edit Profile Name") || ""
           }
           slotProps={{
             input: {
               readOnly: !isEditing,
             },
+            htmlInput: {
+              maxLength: 20
+            }
           }}
           onChange={(e) => setValue(e.target.value)}
           onBlur={() => handleProfileNameUpdate()}
