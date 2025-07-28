@@ -13,7 +13,7 @@ Are you drowning in Chrome tabs?
 I know all too well how quickly 100+ tabs and 15+ groups can slow your browser and kill productivity. **TabCoral** was built to fix this:
 
 - Save all your open tabs and tab groups into organized profiles.
-- Reopen sessions instantly — no more digging through history.
+- Reopen sessions instantly! no more digging through history.
 - Keep your dashboard pinned to the far left, acting as a hub for your workflows.
 - Reduce Chrome memory usage by archiving tabs instead of leaving them open.
 
