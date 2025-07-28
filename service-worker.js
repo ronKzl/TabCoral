@@ -75,7 +75,7 @@ async function collectTabData() {
   const orderedEntries = [];
 
   for (const tab of tabs) {
-    if (tab.id === extensionTab) continue; // skip dashboard
+    if (tab.id === extensionTab || tab.url && tab.url.includes("dist/index.html")) continue; // skip dashboard
     if (!tabGroups.has(tab.groupId)) tabGroups.set(tab.groupId, []);
     tabGroups.get(tab.groupId).push({
       index: tab.index,

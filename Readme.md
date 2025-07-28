@@ -1,40 +1,89 @@
-# Tab Coral 🐠
+# TabCoral 
 
-A minimal Chrome Extension to create and persist a dashboard tab that stays pinned on the far left — designed to evolve into a personal tab group saver to solve my chrome tab addiction.
+> A smart Chrome Extension to save and organize tabs into profiles — helping you declutter Chrome, boost performance, and easily switch between workflows.
 
-## 🚀 Features
-- TBD
+> Now available on the chrome store here:
 
-## 🛠 Tech Stack
+---
 
-- Chrome Extensions API (Manifest V3)
-- JavaScript (Extension Sidebar & Extension service worker)
-- TypeScript (User Control Dashboard)
-- React + Vite, Redux, React Material UI (User Control Dashboard)
+## **Why TabCoral?**
 
+Are you drowning in Chrome tabs? 
+![Too much clutter](./showcase/before.jpg)
+I know all too well how quickly 100+ tabs and 15+ groups can slow your browser and kill productivity. **TabCoral** was built to fix this:
 
-# 📌 TabCoral Roadmap
+- Save all your open tabs and tab groups into organized profiles.
+- Reopen sessions instantly — no more digging through history.
+- Keep your dashboard pinned to the far left, acting as a hub for your workflows.
+- Reduce Chrome memory usage by archiving tabs instead of leaving them open.
 
-A user-behavior driven checklist to guide development.
+---
 
-## MVP
+## **🚀 Features**
+- Create, save, and manage multiple **tab profiles** (e.g., Work, Research, Gaming).
+- View all your open tabs and tab groups in a clean dashboard.
+- Reopen saved groups and tabs with a single click.
+- Delete or rename saved profiles on the fly.
+- Persistent dashboard that reopens even after Chrome restarts.
+- Built with a **modern UI (Material UI + React)**.
 
+---
+
+## **🎥 Demo & Screenshots**
+Here are a few highlights of TabCoral in action:
+
+![Dashboard Overview](./showcase/createProject.gif)  
+![TabCoral Demo](./showcase/restoreAndPickup.gif) 
+![View Your Profile by Tabs or by Groups](./showcase/twoModes.gif)  
+![When done simply remove](./showcase/whenDoneRemoveProfile.gif)
+![When done simply remove](./showcase/removeByTab.gif)
+![When done simply remove](./showcase/removeByGroup.gif)
+
+---
+
+## **🛠 Tech Stack**
+- **Frontend**: React, Vite, Redux, Material UI
+- **Extension Core**: JavaScript (Manifest V3), Chrome Extensions API
+- **Dashboard**: TypeScript (React Components)
+
+---
+
+## **📌 TabCoral Roadmap**
+
+### **MVP**
 - [x] Extension dashboard is present on install and persistent through crashes.
-- [x] User is able to view their current tab and group setup in a side panel
-- [x] User is able to choose to save all open groups and tabs to a profile
-- [x] User is able to view their saved tab groups in an organized way on a dashboard page. 
-- [x] User is able to click a button on the dashboard page to reopen a select saved group.
-- [x] User is able to delete pages/groups from dashbaord page. 
-- [x] User is able to create working profiles, each with certain tabs open (Work, Game, Research etc.)
-- [x] User is able to delete profiles
-- [x] User is able to switch between working profiles 
-- [x] User is able to restore profiles to browser
-- [x] User is able to rename a profile 
-- [x] QOL updates to profiles and extension usability workflow & bugfixes
-- [x] Styling 
-- [ ] Chrome related publishing <--- WIP
+- [x] User can view their current tab and group setup in a side panel.
+- [x] User can save all open groups and tabs to a profile.
+- [x] User can view saved tab groups in an organized way on a dashboard page.
+- [x] User can reopen saved groups with a single click.
+- [x] User can delete pages/groups from the dashboard.
+- [x] User can create working profiles (Work, Gaming, Research, etc.).
+- [x] User can delete profiles.
+- [x] User can switch between profiles.
+- [x] User can restore profiles to the browser.
+- [x] User can rename a profile.
+- [x] QOL updates to profiles and workflow & bugfixes.
+- [x] Styling improvements.
+- [x] Chrome Web Store publishing.
 
-## Post MVP
-- [ ] Cross Browser Sync
-- [ ] Pagination on tab view
-- [ ] App themes (black, white, etc.)
+### **Post MVP**
+- [ ] Cross-browser sync.
+- [ ] App themes (black, white, etc.).
+
+---
+
+## **🔧 Installation (Developer Mode)**
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/ronKzl/TabCoral.git
+2. Change directory to the vite folder
+   ```bash
+   cd dashboard-ui/dashboard
+3. Install dependencies and build the project
+   ```bash
+   npm install
+   npm run build
+4. Load into chrome extensions using developer mode.
+
+
