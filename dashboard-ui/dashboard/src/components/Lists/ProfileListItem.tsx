@@ -9,6 +9,8 @@ import AlertDialog from "../Actions/AlertBox";
 import { type PopUpState } from "../../App";
 import { type session } from "../../interfaces/session";
 import { TextField } from "@mui/material";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RestoreIcon from '@mui/icons-material/Restore';
 interface ProfileListItemProps {
   session_id: string;
   session_index: number;
@@ -151,9 +153,12 @@ export default function ProfileListItem({
             sx={{ color: "silver" }}
             variant="text"
           >
+            <RestoreIcon sx={{ color: "silver" }}/>
             Restore
           </Button>{" "}
+          
           <Button
+
             onClick={() =>
               setalertDialogState({
                 isOpen: true,
@@ -163,6 +168,7 @@ export default function ProfileListItem({
             sx={{ color: "red" }}
             variant="text"
           >
+            <DeleteForeverIcon sx={{ color: "red" }} />
             Delete
           </Button>
         </>

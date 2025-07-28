@@ -14,7 +14,7 @@ export default function ProfilesList({ setPopUpOpen }: ProfileListProps) {
 
   return (
     <List
-      sx={{ width: "100%", maxWidth: 360 }}
+      sx={{ width: "100%", maxWidth: 400 }}
       component="nav"
       aria-labelledby="nested-list-subheader"
       subheader={

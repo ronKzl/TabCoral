@@ -1,6 +1,6 @@
 import { Box, Typography, Button,Paper } from "@mui/material";
-import SentimentDissatisfiedIcon from "@mui/icons-material/SentimentDissatisfied";
 import { type PopUpState } from "../../App";
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 interface EmptyWindowProps {
   setPopUpOpen: React.Dispatch<React.SetStateAction<PopUpState>>;
@@ -49,7 +49,7 @@ function EmptyWindow({setPopUpOpen}:EmptyWindowProps) {
           maxWidth: 400,
         }}
       >
-        <SentimentDissatisfiedIcon sx={{ fontSize: 60, mb: 2, color: "grey.400" }} />
+        <CreateNewFolderIcon sx={{ fontSize: 60, mb: 2, color: "grey.400" }} />
         <Typography variant="h6" sx={{ mb: 1, color: "white" }}>
           No Profile Selected
         </Typography>
