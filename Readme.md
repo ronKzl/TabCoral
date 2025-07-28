@@ -86,4 +86,10 @@ Here are a few highlights of TabCoral in action:
    npm run build
 4. Load into chrome extensions using developer mode.
 
+## **🔒 Privacy**
+
+TabCoral stores all data **locally** in Chrome's `chrome.storage.local`.  
+The extension never collect, transmit, or share any user data.
+
+[Read the full Privacy Policy here.](https://ronkzl.github.io/tabcoral-privacy.html)
 
