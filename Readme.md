@@ -9,7 +9,7 @@
 ## **Why TabCoral?**
 
 Are you drowning in Chrome tabs? 
-![Too much clutter](./showcase/before.jpg)
+![Too much clutter](./showcase/before.JPG)
 I know all too well how quickly 100+ tabs and 15+ groups can slow your browser and kill productivity. **TabCoral** was built to fix this:
 
 - Save all your open tabs and tab groups into organized profiles.
