@@ -153,7 +153,7 @@ export default function ProfileListItem({
             sx={{ color: "silver" }}
             variant="text"
           >
-            <RestoreIcon sx={{ color: "silver" }}/>
+            <RestoreIcon sx={{ fontSize: 15, color: "silver" }}/>
             Restore
           </Button>{" "}
           
@@ -168,7 +168,7 @@ export default function ProfileListItem({
             sx={{ color: "red" }}
             variant="text"
           >
-            <DeleteForeverIcon sx={{ color: "red" }} />
+            <DeleteForeverIcon sx={{ fontSize: 15, color: "red" }} />
             Delete
           </Button>
         </>
