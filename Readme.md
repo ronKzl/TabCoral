@@ -2,7 +2,7 @@
 
 > A smart Chrome Extension to save and organize tabs into profiles — helping you declutter Chrome, boost performance, and easily switch between workflows.
 
-> Now available on the chrome store here:
+> Now available on the [chrome store](https://chromewebstore.google.com/detail/tabcoral/mnmabfgedpiboodebmlplmicbggekdek)!
 
 ---
 
